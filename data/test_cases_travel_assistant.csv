@@ -1,0 +1,9 @@
+query,filters,expected_result
+I’m planning a trip to Denver. What can I see and do there?,"{'country': 'denver', 'min_days': None, 'max_days': None, 'activities': [], 'budget': None}",match
+I want a short vacation between 2 and 5 days.,"{'country': None, 'min_days': 2, 'max_days': 5, 'activities': [], 'budget': None}",match
+I’m looking for a hiking trip with some museums.,"{'country': None, 'min_days': None, 'max_days': None, 'activities': ['hiking', 'museum'], 'budget': None}",match
+I need a plan with a maximum budget of $200.,"{'country': None, 'min_days': None, 'max_days': None, 'activities': [], 'budget': 200}",match
+I want a romantic 3-day getaway to Denver with museums and a budget under $500.,"{'country': 'denver', 'min_days': 3, 'max_days': 3, 'activities': ['museum'], 'budget': 500}",match
+What can I do in Atlantis?,"{'country': 'atlantis', 'min_days': None, 'max_days': None, 'activities': [], 'budget': None}",no match
+I need a trip for 100 days.,"{'country': None, 'min_days': 90, 'max_days': 100, 'activities': [], 'budget': None}",no match
+Plan a luxury trip to New York with a $5 budget.,"{'country': 'new york', 'min_days': None, 'max_days': None, 'activities': [], 'budget': 5}",no match

@@ -1,9 +1,14 @@
+import os
+os.environ["STREAMLIT_WATCHER_TYPE"] = "none"
+
 import streamlit as st
 import faiss
 import pickle
 import numpy as np
 from sentence_transformers import SentenceTransformer
-from generate_response import generate_response
+from rag_pipeline.generate_response import generate_response
+from nlp.ner_utils import extract_entities
+import re
 
 # Load index and documents
 @st.cache_resource
@@ -47,7 +52,6 @@ if apply_budget:
 # Submit
 if st.button("🔍 Get Itinerary") and query:
     # Apply filters
-    import re
     filtered_docs = []
     for doc in all_documents:
         doc_lower = doc.lower()
@@ -102,3 +106,14 @@ if st.button("🔍 Get Itinerary") and query:
         with st.spinner("Generating response..."):
             answer = generate_response(query, top_matches)
             st.success(answer)
+
+        # Show extracted entities
+        st.subheader("🔍 Named Entities in Results")
+        for i, doc in enumerate(top_matches):
+            entities = extract_entities(doc)
+            if entities:
+                st.markdown(f"**Entities in Match {i+1}:**")
+                for ent in entities:
+                    st.markdown(f"- `{ent[0]}` ({ent[1]})")
+            else:
+                st.markdown(f"**No entities found in Match {i+1}.**")
