@@ -13,3 +13,4 @@ def test_generate_response_basic():
     result = generate_response(query, context)
     assert isinstance(result, str)
     assert "Rome" in result or "Colosseum" in result
+

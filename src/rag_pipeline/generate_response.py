@@ -9,7 +9,13 @@ ROOT_DIR = pathlib.Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from utils.logger import log_interaction  # Now works properly
+from utils.logger import log_interaction
+from nlp.ner_utils import extract_entities
+from agents.tool_wrappers import (
+    mock_google_maps_route,
+    mock_restaurant_recommendation,
+    mock_hotel_suggestions
+)
 
 # Load environment variables
 load_dotenv()
@@ -17,6 +23,27 @@ api_key = os.getenv("OPENAI_API_KEY")
 
 # Initialize OpenAI client
 client = OpenAI(api_key=api_key)
+
+
+def enrich_prompt_with_tools(query, entities):
+    prompt = ""
+
+    # converti lista di tuple in dizionario semplice
+    ent_dict = {label.lower(): text for text, label in entities}
+
+    if ent_dict.get("origin") and ent_dict.get("destination"):
+        prompt += mock_google_maps_route(ent_dict["origin"], ent_dict["destination"]) + "\n"
+
+    if ent_dict.get("destination") and ent_dict.get("cuisine"):
+        recs = mock_restaurant_recommendation(ent_dict["destination"], ent_dict["cuisine"])
+        prompt += f"Recommended restaurants in {ent_dict['destination']}: {', '.join(recs)}\n"
+
+    if ent_dict.get("destination"):
+        hotels = mock_hotel_suggestions(ent_dict["destination"])
+        prompt += f"Hotel options in {ent_dict['destination']}: {', '.join(hotels)}\n"
+
+    return prompt
+
 
 def generate_response(query, context_docs, model="gpt-3.5-turbo"):
     """
@@ -30,11 +57,19 @@ def generate_response(query, context_docs, model="gpt-3.5-turbo"):
     Returns:
         str: Generated assistant response or error message.
     """
-    # Truncate long documents to stay within token limits
-    truncated_docs = [doc[:1000] for doc in context_docs]
-    context = "\n\n".join(truncated_docs)
+    try:
+        # Step 1: Extract entities from query
+        extracted_entities = extract_entities(query)
 
-    prompt = f"""You are a travel assistant. Based on the following context, answer the user's travel query.
+        # Step 2: Enrich context with tool-based information
+        tool_context = enrich_prompt_with_tools(query, extracted_entities)
+
+        # Step 3: Add RAG-retrieved documents
+        truncated_docs = [doc[:1000] for doc in context_docs]
+        context = tool_context + "\n\n" + "\n\n".join(truncated_docs)
+
+        # Step 4: Compose the final prompt
+        prompt = f"""You are a travel assistant. Based on the following context, answer the user's travel query.
 
 Context:
 {context}
@@ -44,7 +79,7 @@ User Query:
 
 Answer:"""
 
-    try:
+        # Step 5: Call OpenAI
         response = client.chat.completions.create(
             model=model,
             messages=[
@@ -54,6 +89,7 @@ Answer:"""
             temperature=0.7,
             max_tokens=500
         )
+
         final_response = response.choices[0].message.content.strip()
         log_interaction(query, context_docs, final_response)
         return final_response

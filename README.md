@@ -58,6 +58,33 @@ pip install -r requirements.txt
 # Launch the assistant (example)
 streamlit run interface/app.py
 
+## 🧪 Running Tests
+
+You can run the automated tests using `pytest`. This will validate the response generation logic and basic retrieval.
+
+```bash
+pytest
+
+# Run retrieval-augmented interface (with FAISS)
+python src/debug/terminal_interface.py
+
+# Run GPT-only response (without document context)
+python tests/test_vs_gpt_simple.py
+
+
+## 🛠 Mock Tool Agents
+
+To simulate external information, mock agents have been created:
+
+- **Google Maps Route**: Simulates travel duration
+- **Restaurant Recommender**: Based on cuisine or city
+- **Hotel Finder**: With pet-friendly filtering
+
+File: `src/agents/tool_wrappers.py`
+
+These are used to enrich the GPT prompt dynamically for more grounded and personalized results.
+
+
 ## Timeline
 May–June: RAG pipeline, NLP components, document indexing
 
