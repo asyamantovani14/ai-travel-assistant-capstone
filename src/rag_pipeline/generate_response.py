@@ -21,15 +21,12 @@ from agents.tool_wrappers import (
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
-# Initialize OpenAI client
-client = OpenAI(api_key=api_key)
-
 
 def enrich_prompt_with_tools(query, entities):
     prompt = ""
 
-    # converti lista di tuple in dizionario semplice
-    ent_dict = {label.lower(): text for text, label in entities}
+    # Verifica che le entità siano già in formato dizionario {label: text}
+    ent_dict = entities
 
     if ent_dict.get("origin") and ent_dict.get("destination"):
         prompt += mock_google_maps_route(ent_dict["origin"], ent_dict["destination"]) + "\n"
@@ -45,7 +42,7 @@ def enrich_prompt_with_tools(query, entities):
     return prompt
 
 
-def generate_response(query, context_docs, model="gpt-3.5-turbo"):
+def generate_response(query, context_docs, model="gpt-3.5-turbo", client=None):
     """
     Generate a response to a travel query using OpenAI and log the interaction.
 
@@ -53,11 +50,16 @@ def generate_response(query, context_docs, model="gpt-3.5-turbo"):
         query (str): User's travel-related question.
         context_docs (list): List of context documents relevant to the query.
         model (str): OpenAI model to use.
+        client (OpenAI, optional): Custom OpenAI client for testing or override.
 
     Returns:
         str: Generated assistant response or error message.
     """
     try:
+        # Use default client if none provided
+        if client is None:
+            client = OpenAI(api_key=api_key)
+
         # Step 1: Extract entities from query
         extracted_entities = extract_entities(query)
 
@@ -91,7 +93,7 @@ Answer:"""
         )
 
         final_response = response.choices[0].message.content.strip()
-        log_interaction(query, context_docs, final_response)
+        log_interaction(query, context_docs, final_response, extracted_entities)
         return final_response
 
     except Exception as e:

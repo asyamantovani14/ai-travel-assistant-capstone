@@ -1,51 +1,56 @@
 import spacy
 import re
 
+# Load spaCy model once
 nlp = spacy.load("en_core_web_sm")
 
-def extract_entities(query: str) -> dict:
-    doc = nlp(query)
+def extract_entities(text):
+    """
+    Extracts structured information from a travel-related query.
 
-    origin = None
-    destination = None
-    budget = None
-    cuisine = None
-    duration = None
-    activities = []
+    Args:
+        text (str): User input query.
+
+    Returns:
+        dict: Dictionary with keys like origin, destination, cuisine, budget, duration.
+    """
+    doc = nlp(text)
+
+    result = {
+        "origin": None,
+        "destination": None,
+        "cuisine": None,
+        "budget": None,
+        "duration": None
+    }
 
     # Named entity recognition
     for ent in doc.ents:
         if ent.label_ == "GPE":
-            # Per ora il primo GPE lo consideriamo come destinazione
-            if not destination:
-                destination = ent.text
-            elif not origin:
-                origin = ent.text
+            if result["destination"] is None:
+                result["destination"] = ent.text
+            elif result["origin"] is None:
+                result["origin"] = ent.text
+
         elif ent.label_ == "MONEY":
             match = re.search(r"\d+", ent.text.replace(",", ""))
             if match:
-                budget = int(match.group())
+                result["budget"] = int(match.group(0))
+
         elif ent.label_ == "DATE":
             match = re.search(r"\d+", ent.text)
             if match:
-                duration = int(match.group())
+                result["duration"] = int(match.group(0))
 
-    # Rule-based parsing per cucina o attività
-    cuisine_keywords = ["italian", "mexican", "japanese", "chinese", "spanish", "thai", "indian"]
-    activity_keywords = ["beach", "hiking", "ski", "museum", "culture", "adventure", "relax", "shopping", "food"]
+        elif ent.label_ in ["NORP", "ORG"]:
+            if "food" in ent.text.lower() or "cuisine" in ent.text.lower():
+                result["cuisine"] = ent.text
 
-    for token in doc:
-        word = token.text.lower()
-        if word in cuisine_keywords:
-            cuisine = word
-        if word in activity_keywords:
-            activities.append(word)
+    # Heuristic check for cuisines
+    if result["cuisine"] is None:
+        for token in doc:
+            if token.lemma_.lower() in ["italian", "mexican", "french", "thai", "japanese", "spanish", "indian", "greek"]:
+                result["cuisine"] = token.lemma_.capitalize()
+                break
 
-    return {
-        "origin": origin,
-        "destination": destination,
-        "cuisine": cuisine,
-        "budget": budget,
-        "duration": duration,
-        "activities": list(set(activities))  # rimuove duplicati
-    }
+    return result

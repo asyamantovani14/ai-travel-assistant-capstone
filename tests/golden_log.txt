@@ -1,0 +1,19 @@
+--- Query at 2025-01-01 12:00:00 ---
+User Query:
+Plan a weekend trip to Paris
+
+Top Matching Documents:
+1. Paris is a romantic city with many attractions.
+
+Extracted Entities:
+{
+  "destination": "Paris",
+  "duration": 2,
+  "cuisine": "French",
+  "origin": "Rome",
+  "budget": 400
+}
+
+Generated Response:
+Mocked reply
+================================================================================
