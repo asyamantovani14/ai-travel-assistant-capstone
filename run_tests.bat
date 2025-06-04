@@ -1,0 +1,3 @@
+@echo off
+echo Running unit and integration tests...
+pytest tests/

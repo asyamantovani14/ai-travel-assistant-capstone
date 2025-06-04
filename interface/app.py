@@ -16,7 +16,7 @@ import pickle
 import numpy as np
 import re
 from sentence_transformers import SentenceTransformer
-from rag_pipeline.generate_response import generate_response
+from rag_pipeline.generate_response import generate_response, generate_response_without_rag
 from nlp.ner_utils import extract_entities
 
 # Load index and documents
@@ -110,6 +110,12 @@ if st.button("🔍 Get Itinerary") and query:
         with st.spinner("Generating response..."):
             answer = generate_response(query, top_matches)
             st.success(answer)
+
+            # Confronto con risposta senza RAG
+            st.subheader("📎 Comparison with ChatGPT-only Response (no RAG)")
+            with st.spinner("Generating standard ChatGPT reply..."):
+                baseline_answer = generate_response_without_rag(query)
+            st.info(baseline_answer)
 
         # Show extracted entities from query
         st.subheader("🔍 Extracted Entities (from query)")

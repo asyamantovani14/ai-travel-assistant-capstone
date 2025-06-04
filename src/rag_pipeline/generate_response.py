@@ -100,3 +100,34 @@ Answer:"""
         error_msg = f"Error generating response: {e}"
         log_interaction(query, context_docs, error_msg)
         return error_msg
+
+def generate_response_without_rag(query, model="gpt-3.5-turbo", client=None):
+    """
+    Generate a response without using retrieval, purely from the LLM.
+
+    Args:
+        query (str): User's travel-related question.
+        model (str): OpenAI model to use.
+        client (OpenAI, optional): Custom OpenAI client for testing.
+
+    Returns:
+        str: Generated assistant response or error message.
+    """
+    if client is None:
+        client = OpenAI(api_key=api_key)
+
+    try:
+        messages = [
+            {"role": "system", "content": "You are a helpful travel assistant."},
+            {"role": "user", "content": query}
+        ]
+        response = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=500
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error (no RAG): {e}"
+
