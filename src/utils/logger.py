@@ -38,21 +38,27 @@ def log_interaction(
 
     log_block.append("Top Matching Documents:")
     for i, doc in enumerate(matched_docs, 1):
+        doc_str = str(doc)  # cast anche se fosse una lista
         if similarities and i <= len(similarities):
-            log_block.append(f"{i}. (score: {similarities[i-1]:.4f}) {doc}")
+            sim_score = similarities[i - 1]
+            log_block.append(f"{i}. (score: {sim_score:.4f}) {doc_str}")
         else:
-            log_block.append(f"{i}. {doc}")
+            log_block.append(f"{i}. {doc_str}")
+
+    if similarities:
+        sim_str = ", ".join([f"{s:.4f}" for s in similarities])
+        log_block.append(f"\nAll Similarity Scores:\n{sim_str}")
 
     if extracted_entities:
         log_block.append("\nExtracted Entities:")
-        log_block.append(json.dumps(extracted_entities, indent=2))
+        log_block.append(str(json.dumps(extracted_entities, indent=2)))
 
     if final_prompt:
         log_block.append("\nFinal Prompt Sent to LLM:")
-        log_block.append(final_prompt)
+        log_block.append(str(final_prompt))
 
     log_block.append("\nGenerated Response:")
-    log_block.append(response)
+    log_block.append(str(response))
     log_block.append("=" * 100 + "\n")
 
     full_text = "\n".join(log_block)

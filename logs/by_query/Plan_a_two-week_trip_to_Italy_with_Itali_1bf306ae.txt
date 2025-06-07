@@ -1,0 +1,39 @@
+--- Query at 2025-06-07 14:30:05 ---
+Model Used: gpt-4
+User Query:
+Plan a two-week trip to Italy with Italian food and a budget under $2000
+
+Top Matching Documents:
+1. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+2. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+3. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+4. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+5. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Extracted Entities:
+{
+  "origin": null,
+  "destination": "Italy",
+  "cuisine": "Italian",
+  "budget": 2000,
+  "duration": 7
+}
+
+Final Prompt Sent to LLM:
+[0.5159659211618405, 0.5159659211618405, 0.5159659211618405, 0.5159659211618405, 0.5159659211618405]
+
+Generated Response:
+Planning a two-week trip to Italy under $2000 with a focus on Italian food can be fulfilling and fun.
+
+Flight: Look for discounted flights to Italy. The price varies greatly depending on your current location, time of booking, and season. Early booking and flexibility with dates can help you get a good deal.
+
+Accommodation: Considering your budget, I recommend the Italy Stay & Go hotel which is pet friendly. The cost varies depending on the season, but budget options are usually available.
+
+Food: Italy is famous for its cuisine. Apart from trying the local trattorias, also visit our recommended restaurants - Italian Delight and Authentic Italian Kitchen. These restaurants offer a wide range of Italian foods to suit your taste buds.
+
+Transportation: Public transportation in Italy is quite efficient and cost-effective. You can travel by bus, train, or tram within cities. For intercity travel, trains are a good option.
+
+Sightseeing: Italy is rich in historical sites, beautiful coastlines, and magnificent landscapes. Allocate a few days to explore the southern Italy where you can enjoy breathtaking views and welcoming locals. Don't miss out on the seafood pasta at the small trattorias by the coast.
+
+Remember, prices can vary greatly depending on the season and the location. Always make sure to check the current prices and book in advance to get the best deals. Enjoy your trip to Italy!
+====================================================================================================
