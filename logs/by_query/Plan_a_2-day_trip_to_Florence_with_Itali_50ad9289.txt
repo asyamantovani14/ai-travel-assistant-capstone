@@ -1,0 +1,33 @@
+--- Query at 2025-06-05 23:52:17 ---
+Model Used: gpt-4
+User Query:
+Plan a 2-day trip to Florence with Italian food
+
+Top Matching Documents:
+1. Florence is known for art, food and pet-friendly stays.
+
+Extracted Entities:
+{
+  "origin": null,
+  "destination": null,
+  "cuisine": "Florence with Italian food",
+  "budget": null,
+  "duration": 2
+}
+
+Final Prompt Sent to LLM:
+You are a travel assistant. Based on the following context, answer the user's travel query.
+
+Context:
+
+
+Florence is known for art, food and pet-friendly stays.
+
+User Query:
+Plan a 2-day trip to Florence with Italian food
+
+Answer:
+
+Generated Response:
+Mocked response from assistant
+====================================================================================================

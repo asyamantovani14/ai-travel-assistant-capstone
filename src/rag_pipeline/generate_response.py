@@ -16,6 +16,7 @@ from agents.tool_wrappers import (
     mock_restaurant_recommendation,
     mock_hotel_suggestions
 )
+from utils.csv_logger import save_response_to_csv
 
 # Load environment variables
 load_dotenv()
@@ -24,8 +25,6 @@ api_key = os.getenv("OPENAI_API_KEY")
 
 def enrich_prompt_with_tools(query, entities):
     prompt = ""
-
-    # Verifica che le entità siano già in formato dizionario {label: text}
     ent_dict = entities
 
     if ent_dict.get("origin") and ent_dict.get("destination"):
@@ -42,36 +41,17 @@ def enrich_prompt_with_tools(query, entities):
     return prompt
 
 
-def generate_response(query, context_docs, model="gpt-3.5-turbo", client=None):
-    """
-    Generate a response to a travel query using OpenAI and log the interaction.
-
-    Args:
-        query (str): User's travel-related question.
-        context_docs (list): List of context documents relevant to the query.
-        model (str): OpenAI model to use.
-        client (OpenAI, optional): Custom OpenAI client for testing or override.
-
-    Returns:
-        str: Generated assistant response or error message.
-    """
+def generate_response(query, context_docs, model="gpt-3.5-turbo", client=None, log_dir="logs"):
     try:
-        # Use default client if none provided
         if client is None:
             client = OpenAI(api_key=api_key)
 
-        # Step 1: Extract entities from query
         extracted_entities = extract_entities(query)
-
-        # Step 2: Enrich context with tool-based information
         tool_context = enrich_prompt_with_tools(query, extracted_entities)
-
-        # Step 3: Add RAG-retrieved documents
         truncated_docs = [doc[:1000] for doc in context_docs]
         context = tool_context + "\n\n" + "\n\n".join(truncated_docs)
 
-        # Step 4: Compose the final prompt
-        prompt = f"""You are a travel assistant. Based on the following context, answer the user's travel query.
+        final_prompt = f"""You are a travel assistant. Based on the following context, answer the user's travel query.
 
 Context:
 {context}
@@ -81,38 +61,51 @@ User Query:
 
 Answer:"""
 
-        # Step 5: Call OpenAI
         response = client.chat.completions.create(
             model=model,
             messages=[
                 {"role": "system", "content": "You are a helpful travel assistant."},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": final_prompt}
             ],
             temperature=0.7,
             max_tokens=500
         )
 
         final_response = response.choices[0].message.content.strip()
-        log_interaction(query, context_docs, final_response, extracted_entities)
+
+        log_interaction(
+            query=query,
+            matched_docs=context_docs,
+            response=final_response,
+            extracted_entities=extracted_entities,
+            model=model,
+            final_prompt=final_prompt,
+            log_dir=log_dir
+        )
+
+        save_response_to_csv(
+            query=query,
+            response=final_response,
+            model=model,
+            entities=extracted_entities,
+            prompt=final_prompt
+        )
+
         return final_response
 
     except Exception as e:
         error_msg = f"Error generating response: {e}"
-        log_interaction(query, context_docs, error_msg)
+        log_interaction(
+            query=query,
+            matched_docs=context_docs,
+            response=error_msg,
+            model=model,
+            log_dir=log_dir
+        )
         return error_msg
 
+
 def generate_response_without_rag(query, model="gpt-3.5-turbo", client=None):
-    """
-    Generate a response without using retrieval, purely from the LLM.
-
-    Args:
-        query (str): User's travel-related question.
-        model (str): OpenAI model to use.
-        client (OpenAI, optional): Custom OpenAI client for testing.
-
-    Returns:
-        str: Generated assistant response or error message.
-    """
     if client is None:
         client = OpenAI(api_key=api_key)
 
@@ -130,4 +123,3 @@ def generate_response_without_rag(query, model="gpt-3.5-turbo", client=None):
         return response.choices[0].message.content.strip()
     except Exception as e:
         return f"Error (no RAG): {e}"
-

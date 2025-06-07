@@ -1,0 +1,76 @@
+[
+  {
+    "title": "Kyoto 3-day Journey",
+    "date": "2023-04-15",
+    "author": "travel_blogger_001",
+    "entries": [
+      {
+        "day": 1,
+        "location": "Kinkaku-ji",
+        "activities": [
+          "Visit Golden Pavilion",
+          "Walk around the temple grounds",
+          "Try matcha tea nearby"
+        ],
+        "notes": "Very crowded after 10 AM."
+      },
+      {
+        "day": 2,
+        "location": "Fushimi Inari",
+        "activities": [
+          "Hike the torii path",
+          "Eat street food at the base",
+          "Visit the main shrine"
+        ],
+        "notes": "Start early to avoid tourist rush."
+      },
+      {
+        "day": 3,
+        "location": "Gion",
+        "activities": [
+          "Stroll through old town",
+          "Watch Geisha performance",
+          "Have dinner at a traditional ryokan"
+        ],
+        "notes": "Great place for photos!"
+      }
+    ]
+  },
+  {
+    "title": "Tokyo Tech & Tradition",
+    "date": "2023-05-02",
+    "author": "nomadic_journal",
+    "entries": [
+      {
+        "day": 1,
+        "location": "Akihabara",
+        "activities": [
+          "Electronics shopping",
+          "Visit anime stores",
+          "Try a maid café"
+        ],
+        "notes": "Good for tech lovers."
+      },
+      {
+        "day": 2,
+        "location": "Asakusa",
+        "activities": [
+          "Explore Senso-ji Temple",
+          "Take a rickshaw tour",
+          "Buy souvenirs on Nakamise Street"
+        ],
+        "notes": "Wear comfortable shoes."
+      },
+      {
+        "day": 3,
+        "location": "Shibuya & Harajuku",
+        "activities": [
+          "Shibuya crossing",
+          "Takeshita Street shopping",
+          "Crepes and fashion"
+        ],
+        "notes": "Vibrant youth culture zone."
+      }
+    ]
+  }
+]

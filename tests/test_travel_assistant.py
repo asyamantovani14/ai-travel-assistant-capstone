@@ -237,3 +237,17 @@ def test_generated_log_matches_golden_file():
             expected_clean = re.sub(r"--- Query at \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} ---", "--- Query at <timestamp>", expected)
 
             assert generated_clean.strip() == expected_clean.strip(), "Generated log does not match golden file."
+
+
+def test_full_multi_source_pipeline():
+    from data_loader.multi_loader import load_all_sources
+    from rag_pipeline.document_retriever import build_faiss_index, retrieve_top_k
+    from rag_pipeline.generate_response import generate_response
+
+    docs = load_all_sources()
+    index, _, model = build_faiss_index(docs)
+    top_docs = retrieve_top_k("A trip to Tokyo with tea ceremonies", index, docs, model)
+    result = generate_response("A trip to Tokyo with tea ceremonies", top_docs)
+    
+    assert isinstance(result, str)
+    assert len(result) > 20

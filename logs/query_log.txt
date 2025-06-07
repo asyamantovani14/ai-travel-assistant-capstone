@@ -4956,3 +4956,195 @@ Generated Response:
 Mocked reply
 ================================================================================
 
+--- Query at 2025-06-05 22:53:13 ---
+Model Used: unknown
+User Query:
+I want a 5-day road trip in Denver
+
+Top Matching Documents:
+1. Blog Entry 365
+2. Blog Entry 25
+3. Blog Entry 35
+4. Blog Entry 745
+5. Blog Entry 350
+
+Extracted Entities:
+{
+  "origin": null,
+  "destination": "Denver",
+  "cuisine": null,
+  "budget": null,
+  "duration": 5
+}
+
+Generated Response:
+For your 5-day road trip in Denver, I recommend considering staying at the Denver Inn, Denver Grand Hotel, or Denver Stay & Go, as they are all pet-friendly options. Each of these hotels can provide a comfortable and convenient base for your trip. Safe travels!
+================================================================================
+
+--- Query at 2025-06-05 22:57:52 ---
+Model Used: unknown
+User Query:
+I want a 5-day road trip in Japan
+
+Top Matching Documents:
+1. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+2. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+3. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+4. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+5. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Extracted Entities:
+{
+  "origin": null,
+  "destination": "Japan",
+  "cuisine": null,
+  "budget": null,
+  "duration": 5
+}
+
+Generated Response:
+For your 5-day road trip in Japan, here are a few suggested stops along the way:
+
+Day 1: Start your journey in Tokyo, explore the vibrant city, visit the Senso-ji Temple, and take a stroll in the bustling neighborhoods like Shibuya and Shinjuku.
+
+Day 2: Drive to Hakone and enjoy the scenic views of Mount Fuji, visit the Hakone Open-Air Museum, and relax in a traditional hot spring (onsen).
+
+Day 3: Head towards Kyoto, a city rich in history and culture. Visit iconic landmarks like Kiyomizu-dera Temple, Fushimi Inari Shrine, and the Arashiyama Bamboo Forest.
+
+Day 4: Drive to Nara, known for its friendly deer and ancient temples. Explore Nara Park, Todai-ji Temple, and Kasuga Taisha Shrine.
+
+Day 5: Make your way back to Tokyo, stopping at picturesque spots along the way like the Fuji Five Lakes region or the historic town of Kamakura.
+
+Enjoy your road trip in Japan!
+================================================================================
+
+--- Query at 2025-06-05 23:23:51 ---
+Model Used: gpt-3.5-turbo
+User Query:
+I want a 5-day road trip in Japan
+
+Top Matching Documents:
+1. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+2. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+3. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+4. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+5. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Extracted Entities:
+{
+  "origin": null,
+  "destination": "Japan",
+  "cuisine": null,
+  "budget": null,
+  "duration": 5
+}
+
+Final Prompt Sent to LLM:
+You are a travel assistant. Based on the following context, answer the user's travel query.
+
+Context:
+Hotel options in Japan: Japan Inn (Pet Friendly), Japan Grand Hotel (Pet Friendly), Japan Stay & Go (Pet Friendly)
+
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+User Query:
+I want a 5-day road trip in Japan
+
+Answer:
+
+Generated Response:
+For your 5-day road trip in Japan, here is a suggested itinerary:
+
+Day 1: Start your road trip in Tokyo, explore the bustling city, visit iconic landmarks such as the Tokyo Tower and Senso-ji Temple.
+
+Day 2: Drive to Hakone, a town known for its hot springs and views of Mount Fuji. Relax in an onsen and take a cruise on Lake Ashi.
+
+Day 3: Head to Kyoto, a city filled with historic temples and gardens. Visit Kinkaku-ji (Golden Pavilion) and Fushimi Inari Taisha Shrine.
+
+Day 4: Drive to Nara, home to friendly deer and ancient temples. Don't miss the Todai-ji Temple and Nara Park.
+
+Day 5: Return to Tokyo or explore nearby areas like Kamakura for its giant Buddha statue and beautiful beaches.
+
+Make sure to book accommodations in advance at one of the pet-friendly hotels in Japan such as Japan Inn, Japan Grand Hotel, or Japan Stay & Go. Enjoy your road trip!
+====================================================================================================
+
+--- Query at 2025-06-05 23:23:51 ---
+Model Used: gpt-3.5-turbo
+User Query:
+I want a 5-day road trip in Japan
+
+Top Matching Documents:
+1. (score: 0.4464) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+2. (score: 0.4464) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+3. (score: 0.4464) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+4. (score: 0.4464) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+5. (score: 0.4464) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Extracted Entities:
+{
+  "origin": null,
+  "destination": "Japan",
+  "cuisine": null,
+  "budget": null,
+  "duration": 5
+}
+
+Generated Response:
+For your 5-day road trip in Japan, here is a suggested itinerary:
+
+Day 1: Start your road trip in Tokyo, explore the bustling city, visit iconic landmarks such as the Tokyo Tower and Senso-ji Temple.
+
+Day 2: Drive to Hakone, a town known for its hot springs and views of Mount Fuji. Relax in an onsen and take a cruise on Lake Ashi.
+
+Day 3: Head to Kyoto, a city filled with historic temples and gardens. Visit Kinkaku-ji (Golden Pavilion) and Fushimi Inari Taisha Shrine.
+
+Day 4: Drive to Nara, home to friendly deer and ancient temples. Don't miss the Todai-ji Temple and Nara Park.
+
+Day 5: Return to Tokyo or explore nearby areas like Kamakura for its giant Buddha statue and beautiful beaches.
+
+Make sure to book accommodations in advance at one of the pet-friendly hotels in Japan such as Japan Inn, Japan Grand Hotel, or Japan Stay & Go. Enjoy your road trip!
+====================================================================================================
+
+--- Query at 2025-06-05 23:28:48 ---
+Model Used: gpt-4
+User Query:
+Plan a 2-day trip to Florence with Italian food
+
+Top Matching Documents:
+1. Florence is known for art, food and pet-friendly stays.
+
+Extracted Entities:
+{
+  "origin": null,
+  "destination": null,
+  "cuisine": "Florence with Italian food",
+  "budget": null,
+  "duration": 2
+}
+
+Final Prompt Sent to LLM:
+You are a travel assistant. Based on the following context, answer the user's travel query.
+
+Context:
+
+
+Florence is known for art, food and pet-friendly stays.
+
+User Query:
+Plan a 2-day trip to Florence with Italian food
+
+Answer:
+
+Generated Response:
+Mocked final reply.
+====================================================================================================
+

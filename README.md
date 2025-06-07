@@ -21,7 +21,7 @@ The assistant leverages a **Retrieval-Augmented Generation (RAG)** architecture 
 - LangChain  
 - spaCy / NLTK  
 - sentence-transformers  
-- Git  
+- Git
 
 ## Project Structure
 
@@ -31,6 +31,7 @@ ai-travel-assistant-capstone/
 ├── src/ # Core modules (rag_pipeline, NLP, utils)
 ├── interface/ # Streamlit app or CLI interface
 ├── docs/ # Diagrams, report material
+├── tests/ # Unit and integration tests
 ├── requirements.txt # Dependencies
 └── README.md
 
@@ -71,6 +72,16 @@ python src/debug/terminal_interface.py
 # Run GPT-only response (without document context)
 python tests/test_vs_gpt_simple.py
 
+# To compare GPT responses against golden references and update them if needed:
+pytest tests/test_golden_comparison.py --accept-new-golden
+
+# Or run specific interfaces:
+# Run terminal-based interface (with FAISS + GPT)
+python src/debug/terminal_interface.py
+
+# Run GPT-only (no RAG context)
+python tests/test_vs_gpt_simple.py
+
 
 ## 🛠 Mock Tool Agents
 
@@ -80,9 +91,30 @@ To simulate external information, mock agents have been created:
 - **Restaurant Recommender**: Based on cuisine or city
 - **Hotel Finder**: With pet-friendly filtering
 
+To simulate external services, mock wrappers are provided:
+
+ -🗺️ mock_google_maps_route() – travel duration simulation
+
+ -🍽️ mock_restaurant_recommendation() – cuisine-based suggestions
+
+ -🏨 mock_hotel_suggestions() – pet-friendly hotels
+
+Located in: src/agents/tool_wrappers.py
+These are injected into the prompt to simulate grounded assistant behavior.
+
 File: `src/agents/tool_wrappers.py`
 
 These are used to enrich the GPT prompt dynamically for more grounded and personalized results.
+
+## 📚 Data Sources
+
+- TravelPlanner Dataset – HuggingFace  
+- TripCraft Dataset – arXiv  
+- Traveler Trip Dataset – Kaggle  
+- Arukikata Travelogue Dataset – travel blog narratives  
+- Open Travel Data (OPTD) – GitHub  
+- Common Crawl (filtered blog content)  
+- Public APIs: TripIt, Skyscanner, Amadeus (free tier access)
 
 
 ## Timeline

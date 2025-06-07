@@ -117,3 +117,4 @@ if st.button("🔍 Get Itinerary") and query:
                     st.markdown(f"- `{ent[0]}` ({ent[1]})")
             else:
                 st.markdown(f"**No entities found in Match {i+1}.**")
+                
