@@ -1,0 +1,75 @@
+--- Query at 2025-06-15 18:05:16 ---
+Model Used: gpt-3.5-turbo
+User Query:
+http://localhost:8501/
+
+Top Matching Documents:
+1. (score: 0.4491) Blog Entry 127
+2. (score: 0.4119) Blog Entry 801
+3. (score: 0.4107) Blog Entry 810
+4. (score: 0.4095) Blog Entry 808
+5. (score: 0.4075) Blog Entry 850
+
+All Similarity Scores:
+0.4491, 0.4119, 0.4107, 0.4095, 0.4075
+
+Extracted Entities:
+{
+  "origin": null,
+  "destination": null,
+  "cuisine": null,
+  "budget": null,
+  "duration": null
+}
+
+Generated Response:
+### Relaxing Getaway in Coastal Paradise
+
+---
+
+**Itinerary:**
+
+---
+
+**Day 1: Arrival in Coastal Paradise**
+- Check into the serene Seaside Resort & Spa, known for its breathtaking ocean views and luxurious amenities.
+- Enjoy a leisurely walk along the sandy beaches and breathe in the fresh sea air.
+
+---
+
+**Day 2: Explore the Local Culture**
+- Visit the charming Coastal Village Market for a taste of local artisan crafts and fresh seafood.
+- Indulge in a relaxing spa treatment at the resort, rejuvenating both body and mind.
+
+---
+
+**Day 3: Adventure and Nature**
+- Embark on a scenic boat tour to explore hidden coves and encounter marine wildlife.
+- Hike along the picturesque Coastal Cliffs Trail, offering stunning panoramic views of the ocean.
+
+---
+
+**Day 4: Culinary Delights**
+- Dine at Sunset Bistro, a beachfront restaurant known for its delectable seafood dishes and romantic ambiance.
+- Savor a sunset cocktail on the resort's rooftop bar, overlooking the shimmering waters.
+
+---
+
+**Hotel Recommendation:**
+- **Seaside Resort & Spa**: A luxurious retreat offering top-notch service, stunning ocean views, and a tranquil atmosphere perfect for relaxation.
+
+---
+
+**Restaurant Tip:**
+- **Sunset Bistro**: A must-visit for fresh seafood and a romantic dining experience by the beach.
+
+---
+
+**Additional Tips:**
+- Don't miss the opportunity to book a sunset cruise for a truly magical experience on the water.
+- Take advantage of the resort's yoga classes or meditation sessions to further unwind during your stay.
+
+---
+
+This coastal paradise offers the perfect blend of relaxation, adventure, and culinary delights, making it an ideal destination for a soothing getaway.
+====================================================================================================

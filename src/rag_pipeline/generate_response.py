@@ -3,6 +3,7 @@ import sys
 import pathlib
 from dotenv import load_dotenv
 from openai import OpenAI
+import streamlit as st
 
 # Ensure src/ is in sys.path for absolute imports
 ROOT_DIR = pathlib.Path(__file__).resolve().parents[1]
@@ -11,11 +12,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from utils.logger import log_interaction
 from nlp.ner_utils import extract_entities
-from agents.tool_wrappers import (
-    mock_google_maps_route,
-    mock_restaurant_recommendation,
-    mock_hotel_suggestions
-)
+from agents.tool_wrappers import generate_smart_enrichment
 from utils.csv_logger import save_response_to_csv
 
 # Load environment variables
@@ -23,22 +20,9 @@ load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
 
-def enrich_prompt_with_tools(query, entities):
-    prompt = ""
-    ent_dict = entities
-
-    if ent_dict.get("origin") and ent_dict.get("destination"):
-        prompt += mock_google_maps_route(ent_dict["origin"], ent_dict["destination"]) + "\n"
-
-    if ent_dict.get("destination") and ent_dict.get("cuisine"):
-        recs = mock_restaurant_recommendation(ent_dict["destination"], ent_dict["cuisine"])
-        prompt += f"Recommended restaurants in {ent_dict['destination']}: {', '.join(recs)}\n"
-
-    if ent_dict.get("destination"):
-        hotels = mock_hotel_suggestions(ent_dict["destination"])
-        prompt += f"Hotel options in {ent_dict['destination']}: {', '.join(hotels)}\n"
-
-    return prompt
+def format_response_markdown(text):
+    blocks = [block.strip() for block in text.strip().split("\n\n") if block.strip()]
+    return "\n\n---\n\n".join(blocks)
 
 
 def generate_response(query, context_docs, model="gpt-3.5-turbo", client=None, log_dir="logs"):
@@ -47,11 +31,20 @@ def generate_response(query, context_docs, model="gpt-3.5-turbo", client=None, l
             client = OpenAI(api_key=api_key)
 
         extracted_entities = extract_entities(query)
-        tool_context = enrich_prompt_with_tools(query, extracted_entities)
+        tool_context = generate_smart_enrichment(extracted_entities)
         truncated_docs = [doc[:1000] for doc in context_docs]
         context = tool_context + "\n\n" + "\n\n".join(truncated_docs)
 
-        final_prompt = f"""You are a travel assistant. Based on the following context, answer the user's travel query.
+        # Prompt migliorato
+        final_prompt = f"""
+You are a professional and friendly travel assistant specialized in customized travel plans.
+
+Your task is to create a helpful, concise and creative travel suggestion for the user's query using the contextual documents and additional tools.
+
+Please include:
+- An engaging itinerary based on location and duration
+- Relevant restaurant or hotel tips if available
+- Specific elements matching the user's preferences (e.g. food, budget, activities)
 
 Context:
 {context}
@@ -59,19 +52,28 @@ Context:
 User Query:
 {query}
 
-Answer:"""
+Respond in a markdown-friendly format.
+Answer:
+"""
+
+        # Sistema di tono dinamico
+        if "adventure" in query.lower() or "hiking" in query.lower():
+            tone = "You are an energetic and adventurous travel assistant who gives thrilling suggestions."
+        else:
+            tone = "You are a calm and professional travel assistant who provides relaxing and well-organized suggestions."
 
         response = client.chat.completions.create(
             model=model,
             messages=[
-                {"role": "system", "content": "You are a helpful travel assistant."},
+                {"role": "system", "content": tone},
                 {"role": "user", "content": final_prompt}
             ],
             temperature=0.7,
             max_tokens=500
         )
 
-        final_response = response.choices[0].message.content.strip()
+        raw_response = response.choices[0].message.content.strip()
+        final_response = format_response_markdown(raw_response)
 
         log_interaction(
             query=query,
@@ -90,6 +92,9 @@ Answer:"""
             entities=extracted_entities,
             prompt=final_prompt
         )
+
+        st.download_button("📋 Copy Response", data=final_response, file_name="response.txt")
+        st.code(final_response, language="markdown")
 
         return final_response
 
@@ -120,6 +125,12 @@ def generate_response_without_rag(query, model="gpt-3.5-turbo", client=None):
             temperature=0.7,
             max_tokens=500
         )
-        return response.choices[0].message.content.strip()
+        raw_response = response.choices[0].message.content.strip()
+        final_response = format_response_markdown(raw_response)
+
+        st.download_button("📋 Copy GPT-only Response", data=final_response, file_name="gpt_response.txt")
+        st.code(final_response, language="markdown")
+
+        return final_response
     except Exception as e:
         return f"Error (no RAG): {e}"

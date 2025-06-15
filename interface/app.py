@@ -8,8 +8,13 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from sentence_transformers import SentenceTransformer
+from geopy.geocoders import Nominatim
+from streamlit_folium import st_folium
+import folium
+import plotly.express as px
+from collections import Counter
 
-# Setup path and env
+# ─── Setup path and env ────────────────────────────────────────────────
 ROOT_DIR = pathlib.Path(__file__).resolve().parents[1]
 SRC_DIR = os.path.join(ROOT_DIR, "src")
 if SRC_DIR not in sys.path:
@@ -17,16 +22,14 @@ if SRC_DIR not in sys.path:
 
 os.environ["STREAMLIT_WATCHER_TYPE"] = "none"
 
-# App Imports
+# ─── App Imports ────────────────────────────────────────────────────────
 from rag_pipeline.generate_response import generate_response, generate_response_without_rag
 from nlp.ner_utils import extract_entities
 from utils.logger import log_interaction
 from utils.csv_logger import save_response_to_csv
+from utils.feedback_logger import save_feedback
 
-import plotly.express as px
-from collections import Counter
-
-# Load resources
+# ─── Load index, docs, model ────────────────────────────────────────────
 @st.cache_resource
 def load_resources():
     index = faiss.read_index("data/indexes/travel_index.faiss")
@@ -37,11 +40,12 @@ def load_resources():
 
 index, all_documents, model = load_resources()
 
-st.title("🌍 AI Travel Assistant")
+# ─── UI Layout ──────────────────────────────────────────────────────────
+st.title(":globe_with_meridians: AI Travel Assistant")
 
-query = st.text_input("✈️ Enter your travel query")
+query = st.text_input(":airplane: Enter your travel query")
 
-st.subheader("🯩 Optional Filters")
+st.subheader(":jigsaw: Optional Filters")
 apply_country = st.checkbox("Filter by country")
 allowed_countries = st.text_input("Countries (comma-separated)").lower().split(",") if apply_country else []
 
@@ -55,17 +59,60 @@ activity_keywords = st.text_input("Activities (comma-separated)").lower().split(
 apply_budget = st.checkbox("Set a max budget")
 budget_limit = st.number_input("Budget in USD", min_value=0) if apply_budget else None
 
-model_choice = st.selectbox("🤖 Select OpenAI model", ["gpt-3.5-turbo", "gpt-4"], index=0)
+model_choice = st.selectbox(":robot_face: Select OpenAI model", ["gpt-3.5-turbo", "gpt-4"], index=0)
 
-if st.button("🔍 Get Itinerary") and query:
+# ─── Map Function ───────────────────────────────────────────────────────
+def show_itinerary_map(origin, destination):
+    st.write(f"\n🗺️ Generating map from **{origin}** to **{destination}**...")
+    try:
+        geolocator = Nominatim(user_agent="travel-assistant-map")
+        origin_loc = geolocator.geocode(origin, timeout=10)
+        dest_loc = geolocator.geocode(destination, timeout=10)
+
+        if not origin_loc:
+            st.error(f"❌ Origin location not found: {origin}")
+            return
+        if not dest_loc:
+            st.error(f"❌ Destination location not found: {destination}")
+            return
+
+        st.success(f"✅ Located **{origin}** at ({origin_loc.latitude:.2f}, {origin_loc.longitude:.2f})")
+        st.success(f"✅ Located **{destination}** at ({dest_loc.latitude:.2f}, {dest_loc.longitude:.2f})")
+
+        midpoint = [
+            (origin_loc.latitude + dest_loc.latitude) / 2,
+            (origin_loc.longitude + dest_loc.longitude) / 2
+        ]
+
+        m = folium.Map(location=midpoint, zoom_start=4)
+        folium.Marker([origin_loc.latitude, origin_loc.longitude], popup=f"{origin} (Start)", icon=folium.Icon(color="green")).add_to(m)
+        folium.Marker([dest_loc.latitude, dest_loc.longitude], popup=f"{destination} (End)", icon=folium.Icon(color="red")).add_to(m)
+        folium.PolyLine([(origin_loc.latitude, origin_loc.longitude), (dest_loc.latitude, dest_loc.longitude)], color="blue", weight=3).add_to(m)
+
+        st_folium(m, width=700, height=500)
+    except Exception as e:
+        st.error(f"🌐 Map generation error: {e}")
+
+# ─── Processing on submission ───
+if "top_matches" not in st.session_state:
+    st.session_state.top_matches = []
+if "similarities" not in st.session_state:
+    st.session_state.similarities = []
+if "extracted_entities" not in st.session_state:
+    st.session_state.extracted_entities = {}
+if "rag_response" not in st.session_state:
+    st.session_state.rag_response = ""
+if "gpt_response" not in st.session_state:
+    st.session_state.gpt_response = ""
+
+if st.button(":mag: Get Itinerary") and query:
+    # FILTRI + SIMILARITY
     filtered_docs = []
     for doc in all_documents:
         doc_lower = doc.lower()
         include = True
-
         if apply_country:
             include &= any(c.strip() in doc_lower for c in allowed_countries)
-
         if apply_duration:
             match = re.search(r"(\d+)\s*[- ]?day[s]?", doc_lower)
             if match:
@@ -73,17 +120,14 @@ if st.button("🔍 Get Itinerary") and query:
                 include &= min_days <= days <= max_days
             else:
                 include = False
-
         if apply_activities:
             include &= any(a.strip() in doc_lower for a in activity_keywords)
-
         if apply_budget:
             match = re.search(r"\$?(\d{3,5})", doc)
             if match:
                 include &= float(match.group(1)) <= budget_limit
             else:
                 include = False
-
         if include:
             filtered_docs.append(doc)
 
@@ -91,100 +135,73 @@ if st.button("🔍 Get Itinerary") and query:
         st.warning("No documents match the filters. Try relaxing them.")
     else:
         st.info("Ranking documents by similarity...")
+
         query_embedding = model.encode([query]).astype("float32")
         embeddings = model.encode(filtered_docs).astype("float32")
         temp_index = faiss.IndexFlatL2(embeddings.shape[1])
         temp_index.add(embeddings)
-
         k = min(5, len(filtered_docs))
         distances, indices = temp_index.search(query_embedding, k)
 
-        top_matches = []
-        for i, idx in enumerate(indices[0]):
-            sim_score = 1 / (1 + distances[0][i])
-            match_text = filtered_docs[idx]
-            top_matches.append(match_text)
-            st.markdown(f"**Match {i+1}** (score: {sim_score:.4f})")
-            st.write(match_text)
-            st.divider()
+        top_matches = [filtered_docs[idx] for idx in indices[0]]
+        similarities = [1 / (1 + distances[0][i]) for i in range(k)]
 
-        st.subheader("🤖 Assistant Suggestion")
-        with st.spinner("Generating answer with RAG..."):
-            answer = generate_response(query, top_matches, model=model_choice)
-            st.success(answer)
+        st.session_state.top_matches = top_matches
+        st.session_state.similarities = similarities
 
-            top_embeddings = model.encode(top_matches).astype("float32")
-            similarities = [1 / (1 + np.linalg.norm(query_embedding - emb.reshape(1, -1))) for emb in top_embeddings]
+        st.metric(label=":bar_chart: Avg Similarity", value=f"{np.mean(similarities):.4f}")
+        st.metric(label=":arrow_down_small: Min Similarity", value=f"{np.min(similarities):.4f}")
+        st.metric(label=":arrow_up_small: Max Similarity", value=f"{np.max(similarities):.4f}")
 
-            avg_sim = np.mean(similarities)
-            min_sim = np.min(similarities)
-            max_sim = np.max(similarities)
+        with st.spinner("Generating RAG and GPT responses..."):
+            st.session_state.rag_response = generate_response(query, top_matches, model=model_choice)
+            st.session_state.gpt_response = generate_response_without_rag(query, model=model_choice)
+            st.session_state.extracted_entities = extract_entities(query)
 
-            st.metric(label="📊 Avg Similarity", value=f"{avg_sim:.4f}")
-            st.metric(label="🔽 Min Similarity", value=f"{min_sim:.4f}")
-            st.metric(label="🔼 Max Similarity", value=f"{max_sim:.4f}")
+        log_interaction(
+            query=query,
+            matched_docs=top_matches,
+            response=st.session_state.rag_response,
+            extracted_entities=st.session_state.extracted_entities,
+            model=model_choice,
+            similarities=similarities
+        )
 
-            extracted_entities = extract_entities(query)
+        save_response_to_csv(
+            query=query,
+            response=st.session_state.rag_response,
+            model=model_choice,
+            entities=st.session_state.extracted_entities,
+            prompt=None
+        )
 
-            log_interaction(query, top_matches, answer, extracted_entities, model_choice, similarities)
-            save_response_to_csv(query, answer, model_choice, extracted_entities, None)
+# ─── Mostra Risultati, Mappa, Feedback ───
+if st.session_state.rag_response:
+    st.subheader(":globe_with_meridians: Side-by-Side Comparison")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**RAG-based Answer:**")
+        st.markdown(st.session_state.rag_response)
+    with col2:
+        st.markdown("**GPT-only Answer:**")
+        st.markdown(st.session_state.gpt_response)
 
-        st.subheader("📎 GPT-only Comparison (no RAG)")
-        with st.spinner("Generating GPT-only response..."):
-            baseline = generate_response_without_rag(query, model=model_choice)
-            st.info(baseline)
+    if st.session_state.extracted_entities.get("origin") and st.session_state.extracted_entities.get("destination"):
+        with st.expander("Click to preview extracted locations"):
+            st.json({
+                "origin": st.session_state.extracted_entities["origin"],
+                "destination": st.session_state.extracted_entities["destination"]
+            })
 
-        st.subheader("🧠 Extracted Entities")
-        st.json(extracted_entities)
+        if st.button("🗺️ Show Map Itinerary"):
+            show_itinerary_map(
+                st.session_state.extracted_entities["origin"],
+                st.session_state.extracted_entities["destination"]
+            )
 
-        st.subheader("🗳️ Give Your Feedback")
-        selected = st.radio("Which response is more helpful?", ["RAG-based", "LLM-only", "Both equally good", "None"], index=0)
-        notes = st.text_area("Optional notes or justification", placeholder="Write your thoughts here...")
-
-        if st.button("Submit Feedback"):
-            from utils.feedback_logger import save_feedback
-            save_feedback(query, answer, baseline, selected, notes)
-            st.success("✅ Feedback saved successfully.")
-
-st.markdown("## 💾 Saved Responses")
-if os.path.exists("logs/responses.csv"):
-    df = pd.read_csv("logs/responses.csv")
-    df = df.dropna(subset=["query"])
-
-    if "timestamp" in df.columns:
-        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
-        df["date"] = df["timestamp"].dt.date
-
-    st.dataframe(df, use_container_width=True)
-
-    if "destination" in df.columns:
-        dest_freq = Counter(df["destination"].dropna())
-        top_dest = pd.DataFrame(dest_freq.items(), columns=["Destination", "Count"]).sort_values("Count", ascending=False)
-        st.subheader("Top Destinations")
-        st.plotly_chart(px.bar(top_dest.head(10), x="Destination", y="Count"), use_container_width=True)
-
-    if "date" in df.columns:
-        df_time = df["date"].value_counts().sort_index()
-        st.subheader("Query Frequency Over Time")
-        st.plotly_chart(px.line(x=df_time.index, y=df_time.values, labels={"x": "Date", "y": "Number of Queries"}), use_container_width=True)
-
-    if os.path.exists("logs/feedback.csv"):
-        fdb = pd.read_csv("logs/feedback.csv")
-        if "timestamp" in fdb.columns:
-            fdb["timestamp"] = pd.to_datetime(fdb["timestamp"], errors="coerce")
-            fdb["date"] = fdb["timestamp"].dt.date
-            f_counts = fdb["date"].value_counts().sort_index()
-            st.subheader("Feedback Over Time")
-            st.plotly_chart(px.line(x=f_counts.index, y=f_counts.values, labels={"x": "Date", "y": "Feedback Count"}), use_container_width=True)
-
-        if "preferred" in fdb.columns:
-            pie = fdb["preferred"].value_counts().reset_index()
-            pie.columns = ["Preference", "Count"]
-            st.plotly_chart(px.pie(pie, names="Preference", values="Count"), use_container_width=True)
-
-    st.download_button("Download CSV", df.to_csv(index=False).encode(), "responses.csv")
-    if os.path.exists("logs/query_log.txt"):
-        with open("logs/query_log.txt", "r", encoding="utf-8") as f:
-            st.download_button("Download Full Log TXT", f.read(), "query_log.txt")
-else:
-    st.info("No responses saved yet.")
+    st.subheader(":ballot_box_with_ballot: Feedback")
+    choice = st.radio("Which response is better?", ["RAG-based", "GPT-only", "Both", "None"])
+    notes = st.text_area("Explain your choice (optional)")
+    if st.button("Submit Feedback"):
+        save_feedback(query, st.session_state.rag_response, st.session_state.gpt_response, choice, notes)
+        st.success("Feedback submitted.")
