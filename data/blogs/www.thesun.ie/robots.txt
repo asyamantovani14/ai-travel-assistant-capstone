@@ -1,0 +1,224 @@
+User-agent: *
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+# Sitemap archive
+Sitemap: https://www.thesun.ie/sitemap.xml
+
+
+Disallow: /*horseracing/racecards/2019*
+Disallow: /*horseracing/racecards/2020*
+Disallow: /*horseracing/racecards/2021*
+Disallow: /*horseracing/racecards/2022*
+Disallow: /*horseracing/results/2019*
+Disallow: /*horseracing/results/2020*
+Disallow: /*horseracing/results/2021*
+Disallow: /*horseracing/results/2022*
+
+Disallow: /search/
+Disallow: /simwidgets/
+Disallow: /player/brightcove/
+Disallow: /*?s=*
+Disallow: *&s=*
+Disallow: /?p=*
+
+
+Disallow: /video/
+
+
+User-agent: *
+Disallow: /tvandshowbiz/
+
+
+User-agent: ias_crawler
+User-agent: admantx-usbatch/3.1
+User-agent: admantx-euaspb/3.1
+Disallow: /
+Disallow: /
+Disallow: /
+
+
+Disallow: /sso/login/
+Disallow: /wp-login.php
+
+
+Disallow: /amp-tealium/
+Disallow: /archives/
+
+
+# News Sitemap
+Sitemap: https://www.thesun.ie/news-sitemap.xml
+
+
+# Nav Sitemap
+Sitemap: https://www.thesun.ie/nav-sitemap.xml
+
+
+# Author Sitemap
+Sitemap: https://www.thesun.ie/author-sitemap.xml
+
+
+# Topic Sitemap
+Sitemap: https://www.thesun.ie/topic-sitemap.xml
+
+
+# Video Sitemap
+Sitemap: https://www.thesun.ie/video-sitemap.xml
+
+
+User-agent: CCBot
+Disallow: /
+
+
+User-agent: anthropic-ai
+Disallow: /
+
+
+User-agent: cohere-ai
+Disallow: /
+
+
+User-agent: ia_archiver
+Disallow: /
+
+
+User-agent: omgili
+Disallow: /
+
+
+User-agent: omgilibot
+Disallow: /
+
+
+User-agent: MJ12bot
+Disallow: /
+
+
+User-agent: PiplBot
+Disallow: /
+
+
+User-agent: Google-Extended
+Disallow: /
+
+
+User-agent: Meltwater
+Disallow: /
+
+
+User-agent: Claude-Web
+Disallow: /
+
+
+User-agent: Claudebot
+Disallow: /
+
+
+User-agent: Perplexity-ai
+Disallow: /
+
+
+User-agent: Seekr
+Disallow: /
+
+
+User-agent: anthropic-aiBytespider
+Disallow: /
+
+
+User-agent: Bytespider
+Disallow: /
+
+
+User-agent: magpie-crawler
+Disallow: /
+
+
+User-agent: NewsNow
+Disallow: /
+
+
+User-agent: news-please
+Disallow: /
+
+
+User-agent: Buck
+Disallow: /
+
+
+User-agent: FacebookBot
+Disallow: /
+
+
+User-agent: Applebot
+Disallow: /
+
+
+User-agent: Applebot-Extended
+Disallow: /
+
+
+User-agent: PerplexityBot
+Disallow: /
+
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+
+User-agent: Scrapy
+Disallow: /
+
+
+User-agent: AHC
+User-agent: AHC/2.1
+User-agent: APIs-Google
+User-agent: AdDefend Site Context Crawler/1.0
+User-agent: AdsBot-Google
+User-agent: AmazonAdBot
+User-agent: Amazonbot
+User-agent: Applebot
+User-agent: Bingbot
+User-agent: Botify
+User-agent: ChatGPT-User
+User-agent: Chrome-Lighthouse
+User-agent: CriteoBot/0.1
+User-agent: DuckDuckBot
+User-agent: EchoboxBot/1.0
+User-agent: GPT-Bot
+User-agent: Google-InspectionTool
+User-agent: GoogleOther
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Googlebot-News
+User-agent: Googlebot-Video
+User-agent: GrapeshotCrawler
+User-agent: GumGum-Bot
+User-agent: HyScore/1.0
+User-agent: Leikibot
+User-agent: MicrosoftPreview
+User-agent: MojeekBot
+User-agent: PetalBot
+User-agent: Screaming Frog SEO Spider
+User-agent: SemrushBot
+User-agent: SeznamBot
+User-agent: SirdataBot
+User-agent: Slack-ImgProxy
+User-agent: Slackbot
+User-agent: Slackbot-LinkExpanding
+User-agent: Slurp
+User-agent: Snap URL Preview Service
+User-agent: Taboolabot
+User-agent: Twitterbot
+User-agent: Yahoo Ad Monitoring
+User-agent: YandexBot
+User-agent: adbeat_bot
+User-agent: adidxbot
+User-agent: bidswitchbot/1.0
+User-agent: facebookexternalhit
+User-agent: outbrain
+User-agent: parse.ly scraper
+User-agent: peer39_crawler/1.0
+User-agent: proximic
+User-agent: weborama-fetcher
+Allow: /tvandshowbiz/
+

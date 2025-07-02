@@ -1,26 +1,28 @@
-import sys
+# 🔧 Streamlit interface for testing LLM entity extraction
+
 import os
-import pathlib
-
-# Aggiunge src/ al PYTHONPATH
-ROOT_DIR = pathlib.Path(__file__).resolve().parents[1]
-SRC_DIR = os.path.join(ROOT_DIR, "src")
-if SRC_DIR not in sys.path:
-    sys.path.insert(0, SRC_DIR)
-
+import sys
 import streamlit as st
-from nlp.ner_utils import extract_entities
 
+# Add path to src folder for module import
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src", "nlp")))
 
-st.title("🔍 Entity Extraction Debugger")
+from llm_ner import extract_entities_with_openai
 
-query = st.text_input("Enter a travel query to extract entities:")
+# -----------------------------
+# 🚀 Streamlit UI
+# -----------------------------
 
-if query:
-    entities = extract_entities(query)
-    st.subheader("📌 Extracted Entities")
-    st.json(entities)
+st.set_page_config(page_title="AI Travel Assistant", page_icon="🧠")
 
-    st.subheader("🧠 Raw SpaCy Entities")
-    doc = extract_entities.__globals__["nlp"](query)
-    st.write([(ent.text, ent.label_) for ent in doc.ents])
+st.title("🧳 AI Travel Assistant")
+st.write("This assistant extracts structured travel information from your query using OpenAI's LLM.")
+
+user_query = st.text_input("✈️ Enter your travel request:")
+
+if user_query:
+    with st.spinner("🧠 Analyzing your request..."):
+        result = extract_entities_with_openai(user_query)
+    st.success("✅ Extraction complete!")
+    st.subheader("📦 Extracted Entities:")
+    st.json(result)

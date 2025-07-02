@@ -1,0 +1,19 @@
+{
+    "name": "Business Insider",
+    "short_name": "BI",
+    "icons": [
+        {
+            "src": "https://www.businessinsider.com/public/assets/BI/US/favicons/android-chrome-192x192.png?v=2023-11",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://www.businessinsider.com/public/assets/BI/US/favicons/android-chrome-512x512.png?v=2023-11",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#002aff",
+    "background_color": "#002aff",
+    "display": "standalone"
+}

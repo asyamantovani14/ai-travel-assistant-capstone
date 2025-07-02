@@ -347,3 +347,347 @@ Generated Response:
 
 This itinerary combines your love for food with pet-friendly accommodations, ensuring a delightful and memorable trip from Madrid to Barcelona. Bon appétit! 🐾🍴
 ====================================================================================================
+--- Query at 2025-06-16 00:12:06 ---
+Model Used: gpt-4
+User Query:
+Implemented itinerary map rendering using folium and streamlit-folium.  Introduced st.session_state to preserve interaction state and prevent full page reset on button click.  Conditionally display the “🗺️ Show Map Itinerary” button only when both origin and destination are successfully extracted.  Added debug messages (st.write()) to confirm geolocation results and help trace errors.  Improved user experience by keeping assistant responses and feedback visible even after interactions.  Included an expander for reviewing extracted entities.
+
+Top Matching Documents:
+1. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+2. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+3. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+4. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+5. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Extracted Entities:
+{
+  "origin": null,
+  "destination": null,
+  "cuisine": null,
+  "budget": null,
+  "duration": null
+}
+
+Final Prompt Sent to LLM:
+
+You are a professional and friendly travel assistant specialized in customized travel plans.
+
+Your task is to create a helpful, concise and creative travel suggestion for the user's query using the contextual documents and additional tools.
+
+Please include:
+- An engaging itinerary based on location and duration
+- Relevant restaurant or hotel tips if available
+- Specific elements matching the user's preferences (e.g. food, budget, activities)
+
+Context:
+No specific entities found. Provide a general travel recommendation based on the user's query.
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+User Query:
+Implemented itinerary map rendering using folium and streamlit-folium.  Introduced st.session_state to preserve interaction state and prevent full page reset on button click.  Conditionally display the “🗺️ Show Map Itinerary” button only when both origin and destination are successfully extracted.  Added debug messages (st.write()) to confirm geolocation results and help trace errors.  Improved user experience by keeping assistant responses and feedback visible even after interactions.  Included an expander for reviewing extracted entities.
+
+Respond in a markdown-friendly format.
+Answer:
+
+
+Generated Response:
+Dear Traveler,
+
+---
+
+Based on your recent exploration of southern Italy, it seems like you've discovered the charm of this less-trodden path. Here's an itinerary recommendation that could further enhance your experience:
+
+---
+
+**Day 1**: Start with the historic city of **Naples**. Explore the Naples Cathedral and the Royal Palace. Don't forget to try the world-famous Neapolitan pizza.
+
+---
+
+**Day 2**: Take a trip to **Pompeii** and marvel at the ruins preserved by the ash of Mount Vesuvius.
+
+---
+
+**Day 3**: Visit the **Amalfi Coast**. The breathtaking views, the welcoming locals and the seafood cuisine will surely delight you.
+
+---
+
+**Day 4**: Go island hopping to **Capri** and **Ischia**. The blue waters will leave you mesmerized.
+
+---
+
+**Day 5**: End your journey in the picturesque town of **Matera** known for its historical caves - "Sassi di Matera".
+
+---
+
+For seafood, try the **Osteria Antica Marina** in Catania, Sicily. It's renowned for its seafood pasta.
+
+---
+
+For accommodation, consider **Hotel Piazza Bellini** in Naples. It's centrally located and offers comfortable rooms within a decent budget.
+
+---
+
+Lastly, you mentioned using folium and streamlit-folium for itinerary map rendering. This is a fantastic tool to visualize your journey and make your travel planning interactive. Keep using the “🗺️ Show Map Itinerary” button once you've decided on your origin and destination. This will surely improve your overall travel planning experience.
+
+---
+
+Happy Travels!
+====================================================================================================
+--- Query at 2025-06-16 00:12:15 ---
+Model Used: gpt-4
+User Query:
+Implemented itinerary map rendering using folium and streamlit-folium.  Introduced st.session_state to preserve interaction state and prevent full page reset on button click.  Conditionally display the “🗺️ Show Map Itinerary” button only when both origin and destination are successfully extracted.  Added debug messages (st.write()) to confirm geolocation results and help trace errors.  Improved user experience by keeping assistant responses and feedback visible even after interactions.  Included an expander for reviewing extracted entities.
+
+Top Matching Documents:
+1. (score: 0.3998) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+2. (score: 0.3998) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+3. (score: 0.3998) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+4. (score: 0.3998) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+5. (score: 0.3998) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+All Similarity Scores:
+0.3998, 0.3998, 0.3998, 0.3998, 0.3998
+
+Extracted Entities:
+{
+  "origin": null,
+  "destination": null,
+  "cuisine": null,
+  "budget": null,
+  "duration": null
+}
+
+Generated Response:
+Dear Traveler,
+
+---
+
+Based on your recent exploration of southern Italy, it seems like you've discovered the charm of this less-trodden path. Here's an itinerary recommendation that could further enhance your experience:
+
+---
+
+**Day 1**: Start with the historic city of **Naples**. Explore the Naples Cathedral and the Royal Palace. Don't forget to try the world-famous Neapolitan pizza.
+
+---
+
+**Day 2**: Take a trip to **Pompeii** and marvel at the ruins preserved by the ash of Mount Vesuvius.
+
+---
+
+**Day 3**: Visit the **Amalfi Coast**. The breathtaking views, the welcoming locals and the seafood cuisine will surely delight you.
+
+---
+
+**Day 4**: Go island hopping to **Capri** and **Ischia**. The blue waters will leave you mesmerized.
+
+---
+
+**Day 5**: End your journey in the picturesque town of **Matera** known for its historical caves - "Sassi di Matera".
+
+---
+
+For seafood, try the **Osteria Antica Marina** in Catania, Sicily. It's renowned for its seafood pasta.
+
+---
+
+For accommodation, consider **Hotel Piazza Bellini** in Naples. It's centrally located and offers comfortable rooms within a decent budget.
+
+---
+
+Lastly, you mentioned using folium and streamlit-folium for itinerary map rendering. This is a fantastic tool to visualize your journey and make your travel planning interactive. Keep using the “🗺️ Show Map Itinerary” button once you've decided on your origin and destination. This will surely improve your overall travel planning experience.
+
+---
+
+Happy Travels!
+====================================================================================================
+--- Query at 2025-06-16 00:13:28 ---
+Model Used: gpt-4
+User Query:
+Three-day trip from Madrid to Barcelona with my dog, focused on food
+
+Top Matching Documents:
+1. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+2. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+3. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+4. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+5. Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Extracted Entities:
+{
+  "origin": "Madrid",
+  "destination": "Barcelona",
+  "cuisine": null,
+  "budget": null,
+  "duration": 3
+}
+
+Final Prompt Sent to LLM:
+
+You are a professional and friendly travel assistant specialized in customized travel plans.
+
+Your task is to create a helpful, concise and creative travel suggestion for the user's query using the contextual documents and additional tools.
+
+Please include:
+- An engaging itinerary based on location and duration
+- Relevant restaurant or hotel tips if available
+- Specific elements matching the user's preferences (e.g. food, budget, activities)
+
+Context:
+Driving from Madrid to Barcelona takes 6 hours 19 mins and covers 627 km.
+In Barcelona, you may enjoy activities such as city tours, museums, and local food tasting.
+Popular restaurants include: Gourmet Bistro, Family Diner, Healthy Greens
+Hotel options in Barcelona: Barcelona Inn (Pet Friendly), Barcelona Grand Hotel (Pet Friendly), Barcelona Stay & Go (Pet Friendly)
+The user is planning a trip of 3 days.
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+User Query:
+Three-day trip from Madrid to Barcelona with my dog, focused on food
+
+Respond in a markdown-friendly format.
+Answer:
+
+
+Generated Response:
+# Your Personalized Itinerary: A Culinary Journey from Madrid to Barcelona with your Furry Friend
+
+---
+
+## Day 1: Departure from Madrid
+Embark on a scenic 6-hour-19-minute drive from Madrid to Barcelona. Remember to take breaks and enjoy the beautiful Spanish countryside.
+
+---
+
+## Day 2: Barcelona - City Tour & Food Exploration
+Start your day with a city tour. Explore the vibrant streets of Barcelona, the Gothic Quarter, and the famous Sagrada Familia.
+
+---
+
+For lunch, visit **Family Diner**, known for its pet-friendly atmosphere and delicious local cuisine.
+
+---
+
+In the afternoon, take a stroll in one of Barcelona's many dog-friendly parks such as Parc de la Ciutadella.
+
+---
+
+As evening approaches, get a taste of Barcelona's nightlife at one of its pet-friendly bars, such as the cozy and comfortable "Espai de Gats” - a cat-themed bar that welcomes dogs too!
+
+---
+
+## Day 3: Barcelona - Museums & More Culinary Delights
+On your second day in the city, delve into Barcelona's rich history. Visit the Picasso Museum or the Barcelona History Museum, both of which allow small pets in carriers.
+
+---
+
+For lunch, try **Healthy Greens** for a light and nutritious meal.
+
+---
+
+In the evening, don't miss the chance to sample Barcelona's famous seafood dishes. Head to **Gourmet Bistro**, known for its exquisite seafood platter.
+
+---
+
+## Accommodation: 
+For your stay, consider **Barcelona Inn**, **Barcelona Grand Hotel**, or **Barcelona Stay & Go**. All are pet-friendly and located conveniently close to the city center, making it easy for you to explore the city.
+
+---
+
+Enjoy your trip and the culinary delights that await you in Barcelona!
+
+---
+
+**Note:** Always remember to check the latest pet regulations of the places you plan to visit. Happy travels!
+====================================================================================================
+--- Query at 2025-06-16 00:13:42 ---
+Model Used: gpt-4
+User Query:
+Three-day trip from Madrid to Barcelona with my dog, focused on food
+
+Top Matching Documents:
+1. (score: 0.4268) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+2. (score: 0.4268) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+3. (score: 0.4268) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+4. (score: 0.4268) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+5. (score: 0.4268) Today I explored a hidden gem in southern Italy. The views were breathtaking and the locals were incredibly welcoming. I had the best seafood pasta ever at a small trattoria by the coast. Definitely a must-visit!
+
+All Similarity Scores:
+0.4268, 0.4268, 0.4268, 0.4268, 0.4268
+
+Extracted Entities:
+{
+  "origin": "Madrid",
+  "destination": "Barcelona",
+  "cuisine": null,
+  "budget": null,
+  "duration": 3
+}
+
+Generated Response:
+# Your Personalized Itinerary: A Culinary Journey from Madrid to Barcelona with your Furry Friend
+
+---
+
+## Day 1: Departure from Madrid
+Embark on a scenic 6-hour-19-minute drive from Madrid to Barcelona. Remember to take breaks and enjoy the beautiful Spanish countryside.
+
+---
+
+## Day 2: Barcelona - City Tour & Food Exploration
+Start your day with a city tour. Explore the vibrant streets of Barcelona, the Gothic Quarter, and the famous Sagrada Familia.
+
+---
+
+For lunch, visit **Family Diner**, known for its pet-friendly atmosphere and delicious local cuisine.
+
+---
+
+In the afternoon, take a stroll in one of Barcelona's many dog-friendly parks such as Parc de la Ciutadella.
+
+---
+
+As evening approaches, get a taste of Barcelona's nightlife at one of its pet-friendly bars, such as the cozy and comfortable "Espai de Gats” - a cat-themed bar that welcomes dogs too!
+
+---
+
+## Day 3: Barcelona - Museums & More Culinary Delights
+On your second day in the city, delve into Barcelona's rich history. Visit the Picasso Museum or the Barcelona History Museum, both of which allow small pets in carriers.
+
+---
+
+For lunch, try **Healthy Greens** for a light and nutritious meal.
+
+---
+
+In the evening, don't miss the chance to sample Barcelona's famous seafood dishes. Head to **Gourmet Bistro**, known for its exquisite seafood platter.
+
+---
+
+## Accommodation: 
+For your stay, consider **Barcelona Inn**, **Barcelona Grand Hotel**, or **Barcelona Stay & Go**. All are pet-friendly and located conveniently close to the city center, making it easy for you to explore the city.
+
+---
+
+Enjoy your trip and the culinary delights that await you in Barcelona!
+
+---
+
+**Note:** Always remember to check the latest pet regulations of the places you plan to visit. Happy travels!
+====================================================================================================
