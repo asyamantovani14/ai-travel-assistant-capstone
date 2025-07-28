@@ -1,0 +1,428 @@
+[
+  {
+    "title": "How this Family Took Their Kids on a Trip Around the World",
+    "url": "https://www.nomadicmatt.com/travel-blogs/traveling-family-interview/",
+    "clean_text": "followup last weeks guest post traveling kids week interviewed james family behind wide wide world like traveling family together affects family relationship got chance meet january bangkok following blog excited chance dynamics family travel intrigue wonderful friendly family craig dani parents warm friendly intelligent imparted onto children connor caroline introduction questions put nomadic matt reservations traveling family craig knew trip would mean wed go long stretches seeing challenge relationship also saw opportunity chance spend quality time children left us think agree weve gotten along better could hoped dani agree think grown closer result trip long lunches dinners day day night night things spill kids weve learned much lives result time together think see clearly people extended travel family challenging times us really worth come idea plan trip craig trip grew ongoing conversation dani knew june kids would changing schools caroline going entering high school conor age would heading middle school knew ever going something ordinary year first idea suggested live year australia friends found could enroll kids australian public school modest amount money dani didnt say wasnt excited idea thought living australia would similar living us tried expand thinking one day found canadian family carlsons took round world trip read web site emailed five years carlsons returned home well considered trip around world lifechanging experience one day dani came running office work home told turn oprah dani rarely watches daytime tv happened day tuned saw dani excited oprah satellite interview andrus family atlanta georgia top table mountain capetown south africa immediately went blog read every word think thats moment knew family could roundtheworld trip spent lot time talking would go would life road would like open discussion expectations concerns talked wanted believed could knew would challenge would good days notsogood days still knew chance lifetime friends family think dani telling families without doubt difficult part parents idea far realm experience way comprehend still got initial shock families supportive one things surprised us something never predicted didnt expect wide range reactions friends family casual friends adopted trip cause sending us information every stop itinerary good friends everything avoid even acknowledging going away year one family neighborhood studiously avoided mentioning trip either craig pumped kids information every turn frankly people sight mind wont exist till back home craig reminds something john w gardner said certain point life learn people neither theyre thinking hand weve also surprised number people reached us offering encouragement advice several travelers including nomadic matt proud say found us web helpful really seem different spirit among travelers refreshing talk people share information rather hoard life road like craig life road like life home different traveling year seems exotic times still find place sleep food eat something day difference though excitement constant change amazing places opportunity meet interesting people dani odd experience see great site like machu picchu morning homeschool kids afternoon challenges moving life new town new country every days opportunity see world makes challenges pale comparison unexpected things traveling family brought road dani every day brings something unexpected sight sound new person experience come expect unexpected best surprise though opportunity gain real appreciation people children becoming wonderful watch think best surprises unexpected lessons come people weve met weve fortunate meet great people travelers locals another important lesson way weve welcomed everywhere weve traveled people treated us well think children learned afraid world people cultures advice people thinking traveling kids craig person family really wants take time travel world figure way may take creativity may take compromise done first step really wanting search families traveling world discovered kiwi family ten ten currently traveling asia part multiyear travel adventure saved trip pinching pennies years family travel dream worked together achieve respect admire every day acutely aware fragile traveled year two thoughts keep coming back first new appreciation whats possible family together nothing admiration respect many families living lives terms thats aspire second deeply grateful wife children spirit adventure willingness take leap faith world hope never lose sense wonder willingness break pack ability confront fears take risk move forward trip best thing weve ever done cant wait see happens next course wanted know kids conor caroline thought excited travel long excited travel family caroline mixed emotions traveling long excited idea also afraid plus didnt want miss friends first year high school worried family ive able stay touch friends skype google video chats facebook gotten along grown closer conor excited travel see world knew special opportunity something many people get missed friends worth hardest time around holidays like christmas thats miss normal life coolest thing done worst caroline weve done lot cool things really liked ziplining ecuador swimming sea lions galapagos taking care elephants thailand really liked traveling new zealand australia japan worst thing ride really dirty bus across northern argentina nasty conor galapagos great liked living boat traveling island island also liked adventure sports new zealand especially zorbing really cool ride mile long luge top great wall havent many bad things suppose worst thing time weve spent waiting airports train bus stations glad want travel future experience made hate traveling caroline almost done im really glad feel like ive done something people ever think travel future probably long one day would like return thailand work elephants elephant nature park near chiang mai conor really glad ill glad get home able see much future though dont think ill travel long think ill take trips shorter periods time much see world spend whole life exploring go read blog follow around world wide wide world",
+    "entities": [
+      {
+        "text": "last weeks",
+        "label": "DATE"
+      },
+      {
+        "text": "traveling kids week",
+        "label": "WORK_OF_ART"
+      },
+      {
+        "text": "james",
+        "label": "PERSON"
+      },
+      {
+        "text": "january bangkok",
+        "label": "PERSON"
+      },
+      {
+        "text": "craig",
+        "label": "PERSON"
+      },
+      {
+        "text": "dani",
+        "label": "PERSON"
+      },
+      {
+        "text": "connor caroline",
+        "label": "PERSON"
+      },
+      {
+        "text": "matt",
+        "label": "PERSON"
+      },
+      {
+        "text": "craig",
+        "label": "PERSON"
+      },
+      {
+        "text": "chance",
+        "label": "PERSON"
+      },
+      {
+        "text": "dani",
+        "label": "PERSON"
+      },
+      {
+        "text": "craig",
+        "label": "PERSON"
+      },
+      {
+        "text": "dani",
+        "label": "PERSON"
+      },
+      {
+        "text": "june",
+        "label": "DATE"
+      },
+      {
+        "text": "caroline",
+        "label": "PERSON"
+      },
+      {
+        "text": "conor",
+        "label": "PERSON"
+      },
+      {
+        "text": "first",
+        "label": "ORDINAL"
+      },
+      {
+        "text": "australia",
+        "label": "GPE"
+      },
+      {
+        "text": "australian",
+        "label": "NORP"
+      },
+      {
+        "text": "dani",
+        "label": "PERSON"
+      },
+      {
+        "text": "australia",
+        "label": "GPE"
+      },
+      {
+        "text": "one day",
+        "label": "DATE"
+      },
+      {
+        "text": "canadian",
+        "label": "NORP"
+      },
+      {
+        "text": "carlsons",
+        "label": "PERSON"
+      },
+      {
+        "text": "five years",
+        "label": "DATE"
+      },
+      {
+        "text": "carlsons",
+        "label": "PERSON"
+      },
+      {
+        "text": "world",
+        "label": "LOC"
+      },
+      {
+        "text": "one day",
+        "label": "DATE"
+      },
+      {
+        "text": "dani",
+        "label": "PERSON"
+      },
+      {
+        "text": "oprah dani",
+        "label": "PERSON"
+      },
+      {
+        "text": "daytime tv",
+        "label": "WORK_OF_ART"
+      },
+      {
+        "text": "day",
+        "label": "DATE"
+      },
+      {
+        "text": "dani",
+        "label": "PERSON"
+      },
+      {
+        "text": "oprah",
+        "label": "PERSON"
+      },
+      {
+        "text": "andrus",
+        "label": "PERSON"
+      },
+      {
+        "text": "atlanta",
+        "label": "GPE"
+      },
+      {
+        "text": "georgia",
+        "label": "GPE"
+      },
+      {
+        "text": "mountain capetown",
+        "label": "GPE"
+      },
+      {
+        "text": "south africa",
+        "label": "GPE"
+      },
+      {
+        "text": "dani",
+        "label": "PERSON"
+      },
+      {
+        "text": "far realm",
+        "label": "LOC"
+      },
+      {
+        "text": "one",
+        "label": "CARDINAL"
+      },
+      {
+        "text": "one",
+        "label": "CARDINAL"
+      },
+      {
+        "text": "craig",
+        "label": "PERSON"
+      },
+      {
+        "text": "craig",
+        "label": "PERSON"
+      },
+      {
+        "text": "john w gardner",
+        "label": "PERSON"
+      },
+      {
+        "text": "matt proud",
+        "label": "PERSON"
+      },
+      {
+        "text": "craig",
+        "label": "PERSON"
+      },
+      {
+        "text": "dani odd",
+        "label": "PERSON"
+      },
+      {
+        "text": "machu picchu",
+        "label": "GPE"
+      },
+      {
+        "text": "morning",
+        "label": "TIME"
+      },
+      {
+        "text": "afternoon",
+        "label": "TIME"
+      },
+      {
+        "text": "new country",
+        "label": "GPE"
+      },
+      {
+        "text": "every days",
+        "label": "DATE"
+      },
+      {
+        "text": "dani",
+        "label": "PERSON"
+      },
+      {
+        "text": "every day",
+        "label": "DATE"
+      },
+      {
+        "text": "we",
+        "label": "GPE"
+      },
+      {
+        "text": "ve",
+        "label": "GPE"
+      },
+      {
+        "text": "we",
+        "label": "GPE"
+      },
+      {
+        "text": "craig",
+        "label": "PERSON"
+      },
+      {
+        "text": "first",
+        "label": "ORDINAL"
+      },
+      {
+        "text": "ten ten",
+        "label": "PERSON"
+      },
+      {
+        "text": "admire",
+        "label": "PERSON"
+      },
+      {
+        "text": "every day",
+        "label": "DATE"
+      },
+      {
+        "text": "two",
+        "label": "CARDINAL"
+      },
+      {
+        "text": "first",
+        "label": "ORDINAL"
+      },
+      {
+        "text": "second",
+        "label": "ORDINAL"
+      },
+      {
+        "text": "spirit",
+        "label": "PERSON"
+      },
+      {
+        "text": "conor",
+        "label": "PERSON"
+      },
+      {
+        "text": "caroline",
+        "label": "GPE"
+      },
+      {
+        "text": "caroline",
+        "label": "PERSON"
+      },
+      {
+        "text": "first",
+        "label": "ORDINAL"
+      },
+      {
+        "text": "i",
+        "label": "PERSON"
+      },
+      {
+        "text": "ve",
+        "label": "PERSON"
+      },
+      {
+        "text": "conor",
+        "label": "GPE"
+      },
+      {
+        "text": "christmas",
+        "label": "DATE"
+      },
+      {
+        "text": "caroline",
+        "label": "PERSON"
+      },
+      {
+        "text": "ecuador",
+        "label": "GPE"
+      },
+      {
+        "text": "thailand",
+        "label": "GPE"
+      },
+      {
+        "text": "new zealand",
+        "label": "GPE"
+      },
+      {
+        "text": "australia",
+        "label": "GPE"
+      },
+      {
+        "text": "japan",
+        "label": "GPE"
+      },
+      {
+        "text": "northern argentina",
+        "label": "LOC"
+      },
+      {
+        "text": "conor galapagos",
+        "label": "GPE"
+      },
+      {
+        "text": "island island",
+        "label": "GPE"
+      },
+      {
+        "text": "new zealand",
+        "label": "GPE"
+      },
+      {
+        "text": "zorbing",
+        "label": "GPE"
+      },
+      {
+        "text": "mile",
+        "label": "QUANTITY"
+      },
+      {
+        "text": "luge",
+        "label": "PRODUCT"
+      },
+      {
+        "text": "caroline",
+        "label": "GPE"
+      },
+      {
+        "text": "thailand",
+        "label": "GPE"
+      },
+      {
+        "text": "chiang mai",
+        "label": "GPE"
+      },
+      {
+        "text": "conor",
+        "label": "PERSON"
+      }
+    ],
+    "tags": [
+      "travel world",
+      "world trip",
+      "traveling world",
+      "travel family",
+      "travel intrigue"
+    ],
+    "tips": [
+      "craig dani parents warm friendly intelligent imparted onto children connor caroline introduction questions put nomadic matt reservations traveling family craig knew trip would mean wed go long stretches seeing challenge relationship also saw opportunity chance spend quality time children left us think agree weve gotten along better could hoped dani agree think grown closer result trip long lunches dinners day day night night things spill kids weve learned much lives result time together think see clearly people extended travel family challenging times us really worth come idea plan trip craig trip grew ongoing conversation dani knew june kids would changing schools caroline going entering high school conor age would heading middle"
+    ]
+  },
+  {
+    "title": "The BEST Family Travel Quotes (2025)",
+    "url": "https://www.travelynnfamily.com/family-travel-quotes/",
+    "clean_text": "travel way reshaping perspectives especially experienced family family travel quotes capture spirit shared adventures lessons learned road joy exploring world together image pairs favourite quote moment journey whether navigating dunes morocco trekking nepal watching sunset rickety bus sri lanka feel free share credit travelynnfamily little spark inspiration family travels afford travel much family read post question get asked lot",
+    "entities": [
+      {
+        "text": "spirit",
+        "label": "PERSON"
+      },
+      {
+        "text": "morocco",
+        "label": "PERSON"
+      },
+      {
+        "text": "nepal",
+        "label": "PERSON"
+      },
+      {
+        "text": "sri lanka",
+        "label": "PERSON"
+      },
+      {
+        "text": "travelynnfamily",
+        "label": "PERSON"
+      }
+    ],
+    "tags": [
+      "family travels",
+      "family travel",
+      "travel",
+      "afford travel",
+      "travels afford"
+    ],
+    "tips": [
+      "a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a travel guide a"
+    ]
+  }
+]

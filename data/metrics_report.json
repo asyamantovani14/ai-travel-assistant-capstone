@@ -1,0 +1,10 @@
+{
+  "metrics": {
+    "silhouette": null,
+    "calinski_harabasz": null,
+    "davies_bouldin": null
+  },
+  "feedback": {
+    "RAG-based": 100.0
+  }
+}
