@@ -1,9 +1,16 @@
+Perfetto, ti preparo una versione corretta e coerente del file **README.md**: ho tolto i dataset che in realtà non hai usato (HuggingFace, Kaggle, ecc.) e ho lasciato solo quelli veri (blog curati). Inoltre ho reso uniforme lo stile, corretto la ripetizione della sezione *Data Sources* e migliorato la leggibilità.
+
+---
+
+```markdown
 # ai-travel-assistant-capstone
-AI-based travel assistant for personalized itinerary planning, focused on pet-friendly and road trip travellers. Built with a RAG architecture combining NLP and travel data sources. Capstone project supervised by Prof. Abhinay Pandya, OPIT University.
+AI-based travel assistant for personalized itinerary planning, focused on pet-friendly and road trip travellers.  
+Built with a Retrieval-Augmented Generation (RAG) architecture combining NLP and curated travel blog data.  
+Capstone project supervised by Prof. Abhinay Pandya, OPIT University.
 
 # AI-Powered Travel Assistant – Capstone Project
 
-This project is part of my Bachelor's capstone thesis at OPIT University, supervised by Prof. Abhinay Pandya.
+This project is part of my Master’s capstone thesis at OPIT University, supervised by Prof. Abhinay Pandya.
 
 It aims to develop an intelligent travel assistant focused on:
 - **Pet-friendly travellers** looking for suitable places to stay and visit  
@@ -11,7 +18,8 @@ It aims to develop an intelligent travel assistant focused on:
 
 ## Project Summary
 
-The assistant leverages a **Retrieval-Augmented Generation (RAG)** architecture that combines lightweight language models (LLMs) with a retrieval pipeline. It provides personalized travel itineraries based on free-text user queries, retrieving relevant content from blogs, datasets, or APIs.
+The assistant leverages a **Retrieval-Augmented Generation (RAG)** architecture that combines lightweight language models (LLMs) with a retrieval pipeline.  
+It provides personalized travel itineraries based on free-text user queries, retrieving relevant content from curated travel blogs.
 
 ## Technologies Used
 
@@ -21,30 +29,32 @@ The assistant leverages a **Retrieval-Augmented Generation (RAG)** architecture 
 - LangChain  
 - spaCy / NLTK  
 - sentence-transformers  
-- Git
+- Git  
 
 ## Project Structure
 
+```
+
 ai-travel-assistant-capstone/
-├── data/ # Raw and processed data
-├── notebooks/ # Exploratory notebooks and prototyping
-├── src/ # Core modules (rag_pipeline, NLP, utils)
-├── interface/ # Streamlit app or CLI interface
-├── docs/ # Diagrams, report material
-├── tests/ # Unit and integration tests
-├── requirements.txt # Dependencies
+├── data/          # Raw and processed data
+├── notebooks/     # Exploratory notebooks and prototyping
+├── src/           # Core modules (RAG pipeline, NLP, utils)
+├── interface/     # Streamlit app or CLI interface
+├── docs/          # Diagrams, report material
+├── tests/         # Unit and integration tests
+├── requirements.txt
 └── README.md
 
+````
 
 ## Data Sources
 
-- TravelPlanner Dataset – HuggingFace  
-- TripCraft Dataset – arXiv  
-- Traveler Trip Dataset – Kaggle  
-- Arukikata Travelogue Dataset – travel blog narratives  
-- Open Travel Data (OPTD) – GitHub  
-- Common Crawl (filtered blog content)  
-- Public APIs: TripIt, Skyscanner, Amadeus (free tier access)
+The knowledge base was developed using more than 500 curated travel blog articles from:  
+- [Along Dusty Roads](https://www.alongdustyroads.com) – curated travel guides and stories  
+- [The Culture Trip](https://theculturetrip.com) – cultural insights and travel tips  
+- [Earth Trekkers](https://www.earthtrekkers.com) – family travel itineraries and recommendations  
+
+These blogs were scraped, cleaned, and enriched (NER, KeyBERT, clustering) to form the Retrieval-Augmented Generation (RAG) knowledge base.
 
 ## How to Run
 
@@ -56,71 +66,47 @@ source venv/bin/activate   # On Windows use venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Launch the assistant (example)
+# Launch the assistant
 streamlit run interface/app.py
+````
 
 ## 🧪 Running Tests
 
-You can run the automated tests using `pytest`. This will validate the response generation logic and basic retrieval.
+You can run the automated tests using `pytest`:
 
 ```bash
 pytest
+```
 
+Other useful commands:
+
+```bash
 # Run retrieval-augmented interface (with FAISS)
 python src/debug/terminal_interface.py
 
 # Run GPT-only response (without document context)
 python tests/test_vs_gpt_simple.py
 
-# To compare GPT responses against golden references and update them if needed:
+# Compare GPT responses against golden references
 pytest tests/test_golden_comparison.py --accept-new-golden
-
-# Or run specific interfaces:
-# Run terminal-based interface (with FAISS + GPT)
-python src/debug/terminal_interface.py
-
-# Run GPT-only (no RAG context)
-python tests/test_vs_gpt_simple.py
-
+```
 
 ## 🛠 Mock Tool Agents
 
-To simulate external information, mock agents have been created:
+To simulate external information, mock agents are included in
+`src/agents/tool_wrappers.py`:
 
-- **Google Maps Route**: Simulates travel duration
-- **Restaurant Recommender**: Based on cuisine or city
-- **Hotel Finder**: With pet-friendly filtering
+* 🗺️ `mock_google_maps_route()` – travel duration simulation
+* 🍽️ `mock_restaurant_recommendation()` – cuisine-based suggestions
+* 🏨 `mock_hotel_suggestions()` – pet-friendly hotels
 
-To simulate external services, mock wrappers are provided:
-
- -🗺️ mock_google_maps_route() – travel duration simulation
-
- -🍽️ mock_restaurant_recommendation() – cuisine-based suggestions
-
- -🏨 mock_hotel_suggestions() – pet-friendly hotels
-
-Located in: src/agents/tool_wrappers.py
-These are injected into the prompt to simulate grounded assistant behavior.
-
-File: `src/agents/tool_wrappers.py`
-
-These are used to enrich the GPT prompt dynamically for more grounded and personalized results.
-
-## 📚 Data Sources
-
-- TravelPlanner Dataset – HuggingFace  
-- TripCraft Dataset – arXiv  
-- Traveler Trip Dataset – Kaggle  
-- Arukikata Travelogue Dataset – travel blog narratives  
-- Open Travel Data (OPTD) – GitHub  
-- Common Crawl (filtered blog content)  
-- Public APIs: TripIt, Skyscanner, Amadeus (free tier access)
-
+These are injected dynamically into prompts to simulate grounded assistant behavior.
 
 ## Timeline
-May–June: RAG pipeline, NLP components, document indexing
 
-July: Interface design, itinerary generation, testing
+* **May–June**: RAG pipeline, NLP components, document indexing
+* **July**: Interface design, itinerary generation, testing
+* **August**: Documentation, final report, and presentation
 
-August: Documentation, final report and presentation
 
+```
