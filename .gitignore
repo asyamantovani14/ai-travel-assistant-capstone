@@ -129,6 +129,15 @@ celerybeat.pid
 
 # Environments
 .env
+
+# Generated travel data and user interaction logs
+/data/blogs/
+/logs/
+
+# Local model and editor caches
+/.streamlit/secrets.toml
+/.idea/
+/.vscode/
 .venv
 env/
 venv/
