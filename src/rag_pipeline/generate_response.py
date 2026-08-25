@@ -6,7 +6,6 @@ import re
 import requests
 from dotenv import load_dotenv
 from openai import OpenAI
-import streamlit as st
 
 # Ensure src/ is in sys.path
 ROOT_DIR = pathlib.Path(__file__).resolve().parents[2]
@@ -145,6 +144,8 @@ def render_valid_blog_links(links, max_items=12):
     Takes a list of (label, url), verifies the URLs, and shows
     only valid ones with clickable buttons.
     """
+    import streamlit as st
+
     valid_count = 0
     for label, url in links:
         if valid_count >= max_items:
@@ -274,6 +275,8 @@ def generate_response(
             )
 
         if render:
+            import streamlit as st
+
             st.download_button("Download (Markdown)", data=final_response, file_name="response.md")
             st.markdown(final_response, unsafe_allow_html=False)
             links = extract_links_from_markdown(final_response)
@@ -311,7 +314,10 @@ def generate_response(
             model=model,
             log_dir=log_dir
         )
-        st.error(error_msg)
+        if render:
+            import streamlit as st
+
+            st.error(error_msg)
         return error_msg
 
 
@@ -335,6 +341,8 @@ def generate_response_without_rag(query, model=None, client=None, render=False):
         final_response = autolink_bare_urls(final_response)
 
         if render:
+            import streamlit as st
+
             st.download_button("Download (Markdown)", data=final_response, file_name="gpt_response.md")
             st.markdown(final_response, unsafe_allow_html=False)
             links = extract_links_from_markdown(final_response)
@@ -345,5 +353,8 @@ def generate_response_without_rag(query, model=None, client=None, render=False):
         return final_response
     except Exception as e:
         error_msg = f"Error (no RAG): {e}"
-        st.error(error_msg)
+        if render:
+            import streamlit as st
+
+            st.error(error_msg)
         return error_msg

@@ -138,6 +138,7 @@ celerybeat.pid
 /.streamlit/secrets.toml
 /.idea/
 /.vscode/
+/artifacts/
 .venv
 env/
 venv/

@@ -1,5 +1,6 @@
 # Application
 faiss-cpu>=1.8
+fastapi>=0.115
 folium>=0.16
 geopy>=2.4
 numpy>=1.26
@@ -28,3 +29,4 @@ plotly>=5.0
 scikit-learn>=1.5
 transformers>=4.45
 tqdm>=4.66
+uvicorn[standard]>=0.30

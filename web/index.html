@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e1715">
+  <title>Atlas Travel Assistant</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-row">
+        <div class="brand-mark">A</div>
+        <div>
+          <div class="brand-name">Atlas</div>
+          <div class="brand-subtitle">Travel intelligence</div>
+        </div>
+      </div>
+
+      <button class="primary-button" id="newTripButton" type="button">
+        <span aria-hidden="true">+</span> New trip
+      </button>
+
+      <nav class="trip-list" aria-label="Recent trips">
+        <div class="nav-label">Recent</div>
+        <button class="trip-item active" type="button">
+          <span class="trip-icon">IT</span>
+          <span><strong>Untitled journey</strong><small>Planning now</small></span>
+        </button>
+      </nav>
+
+      <div class="preferences">
+        <div class="nav-label">Preferences</div>
+        <label>Countries<input id="countries" type="text" placeholder="Italy, France"></label>
+        <label>Interests<input id="activities" type="text" placeholder="Food, hiking, art"></label>
+        <div class="field-grid">
+          <label>Min. days<input id="minDays" type="number" min="1" max="365" placeholder="5"></label>
+          <label>Budget<input id="maxBudget" type="number" min="1" placeholder="$ 2,500"></label>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <span>Knowledge base ready</span>
+      </div>
+    </aside>
+
+    <main class="conversation">
+      <header class="topbar">
+        <button class="mobile-menu" id="menuButton" type="button" aria-label="Open navigation">☰</button>
+        <div class="mobile-wordmark">Atlas</div>
+        <div>
+          <h1 id="conversationTitle">Plan a new journey</h1>
+          <p>Personal itinerary workspace</p>
+        </div>
+        <button class="quiet-button" id="exportButton" type="button">Export plan</button>
+      </header>
+
+      <section class="messages" id="messages" aria-live="polite">
+        <div class="welcome" id="welcome">
+          <div class="eyebrow">Your travel desk</div>
+          <h2>Where are we going next?</h2>
+          <p>Share a destination, dates, budget, and pace. Atlas will shape the details as the conversation develops.</p>
+          <div class="prompt-grid">
+            <button type="button" data-prompt="Plan seven relaxed days in Sicily for two, focused on food and small towns."><strong>Sicily slowly</strong><span>Food, coast and small towns</span></button>
+            <button type="button" data-prompt="Build a 10-day family-friendly Japan itinerary for spring."><strong>Japan in spring</strong><span>Family pace and rail travel</span></button>
+            <button type="button" data-prompt="Create a five-day dog-friendly road trip through the Dolomites."><strong>Dolomites by car</strong><span>Trails and pet-friendly stays</span></button>
+          </div>
+        </div>
+      </section>
+
+      <div class="composer-wrap">
+        <form class="composer" id="chatForm">
+          <textarea id="messageInput" rows="1" maxlength="4000" placeholder="Ask Atlas to plan or refine your trip"></textarea>
+          <button id="sendButton" type="submit" aria-label="Send message">↑</button>
+        </form>
+        <div class="composer-meta"><span>Travel details may change. Verify bookings before purchase.</span><span id="charCount">0 / 4000</span></div>
+      </div>
+    </main>
+
+    <aside class="itinerary-panel">
+      <div class="cover">
+        <img src="/assets/coastal-journey.png" alt="Mediterranean coastal town with a railway beside the sea">
+        <div class="cover-overlay">
+          <span id="tripLabel">Your next journey</span>
+          <strong id="tripDestination">Open canvas</strong>
+        </div>
+      </div>
+
+      <section class="trip-summary">
+        <div class="section-heading"><h2>Trip brief</h2><span id="briefStatus">Waiting for details</span></div>
+        <dl class="facts">
+          <div><dt>Route</dt><dd id="routeFact">Not set</dd></div>
+          <div><dt>Duration</dt><dd id="durationFact">Flexible</dd></div>
+          <div><dt>Budget</dt><dd id="budgetFact">Not set</dd></div>
+          <div><dt>Sources</dt><dd id="sourceCount">0 matched</dd></div>
+        </dl>
+      </section>
+
+      <section class="source-section">
+        <div class="section-heading"><h2>Travel knowledge</h2><span>RAG</span></div>
+        <div class="source-list" id="sourceList">
+          <div class="empty-sources">Relevant guides will appear here as Atlas plans.</div>
+        </div>
+      </section>
+    </aside>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>

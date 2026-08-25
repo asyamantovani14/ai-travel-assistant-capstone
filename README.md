@@ -1,112 +1,116 @@
-Perfetto, ti preparo una versione corretta e coerente del file **README.md**: ho tolto i dataset che in realtà non hai usato (HuggingFace, Kaggle, ecc.) e ho lasciato solo quelli veri (blog curati). Inoltre ho reso uniforme lo stile, corretto la ripetizione della sezione *Data Sources* e migliorato la leggibilità.
+# Atlas Travel Assistant
 
----
+Atlas is a conversational travel planner built as an OPIT University capstone
+project. It combines a curated travel knowledge base, semantic retrieval, live
+provider data, and an LLM to produce itineraries that can be refined over a
+multi-turn conversation.
 
-```markdown
-# ai-travel-assistant-capstone
-AI-based travel assistant for personalized itinerary planning, focused on pet-friendly and road trip travellers.  
-Built with a Retrieval-Augmented Generation (RAG) architecture combining NLP and curated travel blog data.  
-Capstone project supervised by Prof. Abhinay Pandya, OPIT University.
+## Product Features
 
-# AI-Powered Travel Assistant – Capstone Project
+- Persistent travel-planning conversations in the browser
+- Retrieval-augmented answers backed by local travel documents
+- Country, activity, duration, and budget preferences
+- Live weather through Open-Meteo
+- Optional Google Maps, Yelp, and Geoapify integrations
+- Inspectable source relevance and extracted trip details
+- Responsive desktop and mobile interface
+- Markdown itinerary export
+- Automated knowledge-base refresh pipeline
 
-This project is part of my Master’s capstone thesis at OPIT University, supervised by Prof. Abhinay Pandya.
+## Technology
 
-It aims to develop an intelligent travel assistant focused on:
-- **Pet-friendly travellers** looking for suitable places to stay and visit  
-- **Road trip travellers** interested in flexible, on-the-go itineraries  
+- FastAPI and Uvicorn
+- HTML, CSS, and JavaScript frontend with no build step
+- OpenAI API
+- FAISS and sentence-transformers
+- spaCy and NLTK
+- Pytest and Playwright
 
-## Project Summary
+## Run Locally
 
-The assistant leverages a **Retrieval-Augmented Generation (RAG)** architecture that combines lightweight language models (LLMs) with a retrieval pipeline.  
-It provides personalized travel itineraries based on free-text user queries, retrieving relevant content from curated travel blogs.
+Create and activate a virtual environment:
 
-## Technologies Used
-
-- Python  
-- Streamlit  
-- FAISS  
-- LangChain  
-- spaCy / NLTK  
-- sentence-transformers  
-- Git  
-
-## Project Structure
-
+```bash
+python -m venv venv
 ```
 
-ai-travel-assistant-capstone/
-├── data/          # Raw and processed data
-├── notebooks/     # Exploratory notebooks and prototyping
-├── src/           # Core modules (RAG pipeline, NLP, utils)
-├── interface/     # Streamlit app or CLI interface
-├── docs/          # Diagrams, report material
-├── tests/         # Unit and integration tests
-├── requirements.txt
-└── README.md
+On Windows:
 
-````
-
-## Data Sources
-
-The knowledge base was developed using more than 500 curated travel blog articles from:  
-- [Along Dusty Roads](https://www.alongdustyroads.com) – curated travel guides and stories  
-- [The Culture Trip](https://theculturetrip.com) – cultural insights and travel tips  
-- [Earth Trekkers](https://www.earthtrekkers.com) – family travel itineraries and recommendations  
-
-These blogs were scraped, cleaned, and enriched (NER, KeyBERT, clustering) to form the Retrieval-Augmented Generation (RAG) knowledge base.
-
-## How to Run
-
-```bash
-# Create virtual environment (optional)
-python -m venv venv
-source venv/bin/activate   # On Windows use venv\Scripts\activate
-
-# Install dependencies
+```powershell
+.\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+python -m uvicorn web_app:app --app-dir src --reload --port 8000
+```
 
-# Launch the assistant
-streamlit run interface/app.py
-````
-
-## 🧪 Running Tests
-
-You can run the automated tests using `pytest`:
+On macOS or Linux:
 
 ```bash
+source venv/bin/activate
+pip install -r requirements.txt
+python -m uvicorn web_app:app --app-dir src --reload --port 8000
+```
+
+Open `http://127.0.0.1:8000`.
+
+## Configuration
+
+Create a local `.env` file. Only `OPENAI_API_KEY` is required for generated
+answers. The remaining providers are optional.
+
+```dotenv
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4.1-mini
+GOOGLE_MAPS_API_KEY=
+YELP_API_KEY=
+GEOAPIFY_API_KEY=
+```
+
+When a live provider is unavailable, Atlas reports that explicitly instead of
+inventing current routes, businesses, or prices.
+
+## Tests
+
+Install development dependencies and run the suite:
+
+```bash
+pip install -r requirements-dev.txt
 pytest
 ```
 
-Other useful commands:
+Capture and validate desktop/mobile layouts while the server is running:
 
 ```bash
-# Run retrieval-augmented interface (with FAISS)
-python src/debug/terminal_interface.py
-
-# Run GPT-only response (without document context)
-python tests/test_vs_gpt_simple.py
-
-# Compare GPT responses against golden references
-pytest tests/test_golden_comparison.py --accept-new-golden
+python scripts/capture_ui.py
 ```
 
-## 🛠 Mock Tool Agents
+Live OpenAI golden comparisons are opt-in:
 
-To simulate external information, mock agents are included in
-`src/agents/tool_wrappers.py`:
+```powershell
+$env:RUN_LIVE_TESTS = "1"
+pytest tests/test_golden_comparison.py
+```
 
-* 🗺️ `mock_google_maps_route()` – travel duration simulation
-* 🍽️ `mock_restaurant_recommendation()` – cuisine-based suggestions
-* 🏨 `mock_hotel_suggestions()` – pet-friendly hotels
+## Knowledge Refresh
 
-These are injected dynamically into prompts to simulate grounded assistant behavior.
+Preview the refresh pipeline:
 
-## Timeline
+```bash
+python src/run_daily_pipeline.py --dry-run
+```
 
-* **May–June**: RAG pipeline, NLP components, document indexing
-* **July**: Interface design, itinerary generation, testing
-* **August**: Documentation, final report, and presentation
+Run the complete refresh:
 
+```bash
+python src/run_daily_pipeline.py
+```
 
+Downloaded blog mirrors and user interaction logs remain local and are ignored
+by Git. See `data/README.md` for the data policy and cleanup workflow.
+
+## Legacy Interface
+
+The previous Streamlit interface remains available during the migration:
+
+```bash
+streamlit run interface/app.py
 ```
