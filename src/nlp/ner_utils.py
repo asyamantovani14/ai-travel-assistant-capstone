@@ -2,8 +2,11 @@ import spacy
 import re
 from word2number import w2n
 
-# Load spaCy model once
-nlp = spacy.load("en_core_web_sm")
+# Use the statistical model when installed and keep basic parsing available otherwise.
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    nlp = spacy.blank("en")
 
 def extract_entities(text, verbose=False):
     """
@@ -36,6 +39,20 @@ def extract_entities(text, verbose=False):
         result["destination"] = destination
         if verbose:
             print(f"[NER] Pattern 'from X to Y': origin={origin}, destination={destination}")
+
+    if not result["destination"]:
+        destination_match = re.search(
+            r"(?:trip|travel|go|visit|itinerary)\s+(?:to|in|for)\s+([A-Za-z][A-Za-z .'-]+)",
+            text,
+            re.IGNORECASE,
+        )
+        if destination_match:
+            result["destination"] = re.split(
+                r"\b(for|with|and|on|during|under|from)\b",
+                destination_match.group(1),
+                maxsplit=1,
+                flags=re.IGNORECASE,
+            )[0].strip()
 
     gpes = []
 
@@ -90,6 +107,20 @@ def extract_entities(text, verbose=False):
                 result["budget"] = w2n.word_to_num(budget_match.group(1))
         except:
             pass
+
+    if result["budget"] is None:
+        numeric_budget = re.search(
+            r"(?:budget|under|max(?:imum)?|spend)\D{0,12}(\d[\d,.]*)",
+            text,
+            re.IGNORECASE,
+        )
+        if numeric_budget:
+            result["budget"] = int(re.sub(r"\D", "", numeric_budget.group(1)))
+
+    if result["duration"] is None:
+        duration_match = re.search(r"(\d+)\s*[- ]?days?", text, re.IGNORECASE)
+        if duration_match:
+            result["duration"] = int(duration_match.group(1))
 
     if verbose:
         print(f"[NER] Final result: {result}")

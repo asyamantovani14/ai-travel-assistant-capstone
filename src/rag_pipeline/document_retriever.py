@@ -3,7 +3,7 @@ import faiss
 import numpy as np
 
 def build_faiss_index(documents, model_name="all-MiniLM-L6-v2"):
-    model = SentenceTransformer(model_name)
+    model = SentenceTransformer(model_name, local_files_only=True)
     embeddings = model.encode(documents, convert_to_numpy=True)
     dim = embeddings.shape[1]
     index = faiss.IndexFlatL2(dim)

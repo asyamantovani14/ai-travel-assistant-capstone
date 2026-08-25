@@ -1,190 +1,242 @@
+import json
 import os
-import sys
 import pathlib
 import re
-import json
+import sys
+
 import faiss
+import folium
 import numpy as np
 import streamlit as st
-from sentence_transformers import SentenceTransformer
 from geopy.geocoders import Nominatim
+from sentence_transformers import SentenceTransformer
 from streamlit_folium import st_folium
-import folium
 
-# Setup path and env
+
 ROOT_DIR = pathlib.Path(__file__).resolve().parents[1]
-SRC_DIR = os.path.join(ROOT_DIR, "src")
-if SRC_DIR not in sys.path:
-    sys.path.insert(0, SRC_DIR)
+SRC_DIR = ROOT_DIR / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
 os.environ["STREAMLIT_WATCHER_TYPE"] = "none"
 
-# App Imports
-from rag_pipeline.generate_response import generate_response, generate_response_without_rag
-from nlp.llm_ner import extract_entities_with_openai as extract_entities
-from utils.logger import log_interaction
-from utils.csv_logger import save_response_to_csv
-from utils.feedback_logger import save_feedback
+from nlp.ner_utils import extract_entities
+from rag_pipeline.generate_response import generate_response
 
-# Load index, docs, model
-@st.cache_resource
+
+st.set_page_config(page_title="Travel Assistant", page_icon="🌍", layout="wide")
+
+
+@st.cache_resource(show_spinner="Loading travel knowledge...")
 def load_resources():
-    index = faiss.read_index("data/indexes/travel_index.faiss")
-    with open("data/indexes/docs_list.json", "r", encoding="utf-8") as f:
-        documents = json.load(f)
-    model = SentenceTransformer("all-MiniLM-L6-v2")
+    index_path = ROOT_DIR / "data" / "indexes" / "travel_index.faiss"
+    docs_path = ROOT_DIR / "data" / "indexes" / "docs_list.json"
+    if not index_path.exists() or not docs_path.exists():
+        raise FileNotFoundError(
+            "Travel index not found. Run: python src/indexing/build_index.py"
+        )
+    index = faiss.read_index(str(index_path))
+    with docs_path.open("r", encoding="utf-8") as file:
+        documents = json.load(file)
+    model = SentenceTransformer("all-MiniLM-L6-v2", local_files_only=True)
+    if index.ntotal != len(documents):
+        raise ValueError("The travel index and document list are out of sync.")
     return index, documents, model
 
-index, all_documents, model = load_resources()
 
-# UI Layout
-st.title(":globe_with_meridians: AI Travel Assistant")
+def document_text(document):
+    if isinstance(document, str):
+        return document
+    if isinstance(document, dict):
+        return "\n".join(
+            str(document.get(key, "")) for key in ("title", "text", "url")
+        )
+    return str(document)
 
-query = st.text_input(":airplane: Enter your travel query")
 
-st.subheader(":jigsaw: Optional Filters")
-apply_country = st.checkbox("Filter by country")
-allowed_countries = st.text_input("Countries (comma-separated)").lower().split(",") if apply_country else []
+def matches_filters(document, countries, activities, min_days, max_budget):
+    text = document_text(document).lower()
+    if countries and not any(country in text for country in countries):
+        return False
+    if activities and not any(activity in text for activity in activities):
+        return False
+    if min_days:
+        duration = re.search(r"(\d+)\s*[- ]?days?", text)
+        if duration and int(duration.group(1)) < min_days:
+            return False
+    if max_budget:
+        prices = [int(value) for value in re.findall(r"\$\s?(\d{2,6})", text)]
+        if prices and min(prices) > max_budget:
+            return False
+    return True
 
-apply_duration = st.checkbox("Filter by trip duration")
-min_days = st.number_input("Min days", min_value=1, step=1) if apply_duration else None
-max_days = st.number_input("Max days", min_value=1, step=1) if apply_duration else None
 
-apply_activities = st.checkbox("Filter by preferred activities")
-activity_keywords = st.text_input("Activities (comma-separated)").lower().split(",") if apply_activities else []
+def retrieve_documents(query, index, documents, model, filters, k=5):
+    query_vector = model.encode([query]).astype("float32")
+    has_filters = any(filters.values())
 
-apply_budget = st.checkbox("Set a max budget")
-budget_limit = st.number_input("Budget in USD", min_value=0) if apply_budget else None
-
-model_choice = st.selectbox(":robot_face: Select OpenAI model", ["gpt-3.5-turbo", "gpt-4"], index=0)
-
-# Map Function
-def show_itinerary_map(origin, destination):
-    st.write(f"\n🗺️ Generating map from **{origin}** to **{destination}**...")
-    try:
-        geolocator = Nominatim(user_agent="travel-assistant-map")
-        origin_loc = geolocator.geocode(origin, timeout=10)
-        dest_loc = geolocator.geocode(destination, timeout=10)
-
-        if not origin_loc:
-            st.error(f"❌ Origin location not found: {origin}")
-            return
-        if not dest_loc:
-            st.error(f"❌ Destination location not found: {destination}")
-            return
-
-        midpoint = [
-            (origin_loc.latitude + dest_loc.latitude) / 2,
-            (origin_loc.longitude + dest_loc.longitude) / 2
+    if not has_filters:
+        distances, indices = index.search(query_vector, min(k, index.ntotal))
+        pairs = [
+            (documents[position], float(1 / (1 + distance)))
+            for position, distance in zip(indices[0], distances[0])
+            if position >= 0
         ]
+        return pairs
 
-        m = folium.Map(location=midpoint, zoom_start=4)
-        folium.Marker([origin_loc.latitude, origin_loc.longitude], popup=f"{origin} (Start)", icon=folium.Icon(color="green")).add_to(m)
-        folium.Marker([dest_loc.latitude, dest_loc.longitude], popup=f"{destination} (End)", icon=folium.Icon(color="red")).add_to(m)
-        folium.PolyLine([(origin_loc.latitude, origin_loc.longitude), (dest_loc.latitude, dest_loc.longitude)], color="blue", weight=3).add_to(m)
+    candidates = [
+        document
+        for document in documents
+        if matches_filters(document, **filters)
+    ]
+    if not candidates:
+        return []
+    texts = [document_text(document) for document in candidates]
+    embeddings = model.encode(texts).astype("float32")
+    filtered_index = faiss.IndexFlatL2(embeddings.shape[1])
+    filtered_index.add(embeddings)
+    distances, indices = filtered_index.search(query_vector, min(k, len(candidates)))
+    return [
+        (candidates[position], float(1 / (1 + distance)))
+        for position, distance in zip(indices[0], distances[0])
+        if position >= 0
+    ]
 
-        st_folium(m, width=700, height=500)
-    except Exception as e:
-        st.error(f"🌐 Map generation error: {e}")
 
-# Session State Initialization
-for key in ["top_matches", "similarities", "extracted_entities", "rag_response", "gpt_response"]:
-    if key not in st.session_state:
-        st.session_state[key] = [] if 'matches' in key or 'similarities' in key else ({} if 'entities' in key else "")
+def conversation_markdown(messages):
+    sections = []
+    for message in messages:
+        heading = "You" if message["role"] == "user" else "Travel Assistant"
+        sections.append(f"## {heading}\n\n{message['content']}")
+    return "\n\n".join(sections)
 
-# Query Submission
-if st.button(":mag: Get Itinerary") and query:
-    filtered_docs = []
-    for doc in all_documents:
-        doc_lower = doc.lower()
-        include = True
-        if apply_country:
-            include &= any(c.strip() in doc_lower for c in allowed_countries)
-        if apply_duration:
-            match = re.search(r"(\d+)\s*[- ]?day[s]?", doc_lower)
-            if match:
-                days = int(match.group(1))
-                include &= min_days <= days <= max_days
-            else:
-                include = False
-        if apply_activities:
-            include &= any(a.strip() in doc_lower for a in activity_keywords)
-        if apply_budget:
-            match = re.search(r"\$?(\d{3,5})", doc)
-            if match:
-                include &= float(match.group(1)) <= budget_limit
-            else:
-                include = False
-        if include:
-            filtered_docs.append(doc)
 
-    if not filtered_docs:
-        st.warning("No documents match the filters. Try relaxing them.")
-    else:
-        st.info("Ranking documents by similarity...")
+def render_map(origin, destination):
+    geolocator = Nominatim(user_agent="travel-assistant-map")
+    origin_location = geolocator.geocode(origin, timeout=10)
+    destination_location = geolocator.geocode(destination, timeout=10)
+    if not origin_location or not destination_location:
+        st.warning("One of the locations could not be found on the map.")
+        return
+    points = [
+        (origin_location.latitude, origin_location.longitude),
+        (destination_location.latitude, destination_location.longitude),
+    ]
+    midpoint = [sum(point[0] for point in points) / 2, sum(point[1] for point in points) / 2]
+    itinerary_map = folium.Map(location=midpoint, zoom_start=5)
+    folium.Marker(points[0], tooltip=origin).add_to(itinerary_map)
+    folium.Marker(points[1], tooltip=destination).add_to(itinerary_map)
+    folium.PolyLine(points, color="#146c5a", weight=4).add_to(itinerary_map)
+    st_folium(itinerary_map, width=None, height=420, use_container_width=True)
 
-        query_embedding = model.encode([query]).astype("float32")
-        embeddings = model.encode(filtered_docs).astype("float32")
-        temp_index = faiss.IndexFlatL2(embeddings.shape[1])
-        temp_index.add(embeddings)
-        k = min(5, len(filtered_docs))
-        distances, indices = temp_index.search(query_embedding, k)
 
-        st.session_state.top_matches = [filtered_docs[idx] for idx in indices[0]]
-        st.session_state.similarities = [1 / (1 + distances[0][i]) for i in range(k)]
+def parse_csv_filter(value):
+    return [part.strip().lower() for part in value.split(",") if part.strip()]
 
-        st.metric(label=":bar_chart: Avg Similarity", value=f"{np.mean(st.session_state.similarities):.4f}")
-        st.metric(label=":arrow_down_small: Min Similarity", value=f"{np.min(st.session_state.similarities):.4f}")
-        st.metric(label=":arrow_up_small: Max Similarity", value=f"{np.max(st.session_state.similarities):.4f}")
 
-        with st.spinner("Generating RAG and GPT responses..."):
-            st.session_state.rag_response = generate_response(query, st.session_state.top_matches, model=model_choice)
-            st.session_state.gpt_response = generate_response_without_rag(query, model=model_choice)
-            st.session_state.extracted_entities = extract_entities(query)
+try:
+    travel_index, all_documents, embedding_model = load_resources()
+except Exception as error:
+    st.error(str(error))
+    st.stop()
 
-        log_interaction(
-            query=query,
-            matched_docs=st.session_state.top_matches,
-            response=st.session_state.rag_response,
-            extracted_entities=st.session_state.extracted_entities,
-            model=model_choice,
-            similarities=st.session_state.similarities
-        )
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {
+            "role": "assistant",
+            "content": "Where would you like to go? Tell me your dates, budget, pace, and who is travelling.",
+        }
+    ]
+if "trip_entities" not in st.session_state:
+    st.session_state.trip_entities = {}
 
-        save_response_to_csv(
-            query=query,
-            response=st.session_state.rag_response,
-            model=model_choice,
-            entities=st.session_state.extracted_entities,
-            prompt=None
-        )
+with st.sidebar:
+    st.header("Trip preferences")
+    countries_value = st.text_input("Countries", placeholder="Italy, France")
+    activities_value = st.text_input("Activities", placeholder="Hiking, museums")
+    min_days_value = st.number_input("Minimum days", min_value=0, value=0, step=1)
+    max_budget_value = st.number_input("Maximum budget (USD)", min_value=0, value=0, step=100)
+    st.divider()
+    if st.button("New trip", use_container_width=True):
+        st.session_state.messages = st.session_state.messages[:1]
+        st.session_state.trip_entities = {}
+        st.rerun()
+    st.download_button(
+        "Download conversation",
+        data=conversation_markdown(st.session_state.messages),
+        file_name="travel-plan.md",
+        mime="text/markdown",
+        use_container_width=True,
+    )
+    st.caption(f"Model: {os.getenv('OPENAI_MODEL', 'gpt-4.1-mini')}")
 
-# Show Results & Map
-if st.session_state.rag_response:
-    st.subheader(":globe_with_meridians: Side-by-Side Comparison")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("**RAG-based Answer:**")
-        st.markdown(st.session_state.rag_response)
-    with col2:
-        st.markdown("**GPT-only Answer:**")
-        st.markdown(st.session_state.gpt_response)
+st.title("Travel Assistant")
 
-    if st.session_state.extracted_entities.get("origin") and st.session_state.extracted_entities.get("destination"):
-        with st.expander("Click to preview extracted locations"):
-            st.json({
-                "origin": st.session_state.extracted_entities["origin"],
-                "destination": st.session_state.extracted_entities["destination"]
-            })
-        if st.button("🗺️ Show Map Itinerary"):
-            show_itinerary_map(
-                st.session_state.extracted_entities["origin"],
-                st.session_state.extracted_entities["destination"]
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+        if message.get("sources"):
+            with st.expander("Travel knowledge used"):
+                for position, source in enumerate(message["sources"], start=1):
+                    st.markdown(f"**{position}. Relevance {source['score']:.3f}**")
+                    st.caption(source["text"][:700])
+
+entities = st.session_state.trip_entities
+origin = entities.get("origin")
+destination = entities.get("destination")
+if origin and destination:
+    with st.expander(f"Map: {origin} to {destination}"):
+        render_map(origin, destination)
+
+query = st.chat_input("Plan a trip or refine your itinerary")
+if query:
+    prior_messages = list(st.session_state.messages)
+    st.session_state.messages.append({"role": "user", "content": query})
+    with st.chat_message("user"):
+        st.markdown(query)
+
+    recent_user_turns = [
+        message["content"] for message in prior_messages if message["role"] == "user"
+    ][-2:]
+    retrieval_query = " ".join(recent_user_turns + [query])
+    filters = {
+        "countries": parse_csv_filter(countries_value),
+        "activities": parse_csv_filter(activities_value),
+        "min_days": min_days_value or None,
+        "max_budget": max_budget_value or None,
+    }
+
+    with st.chat_message("assistant"):
+        with st.spinner("Building your itinerary..."):
+            matches = retrieve_documents(
+                retrieval_query,
+                travel_index,
+                all_documents,
+                embedding_model,
+                filters,
             )
+            if not matches:
+                answer = "I could not find travel knowledge matching those filters. Try broadening them."
+            else:
+                documents = [document_text(document) for document, _ in matches]
+                answer = generate_response(
+                    query,
+                    documents,
+                    conversation_history=prior_messages,
+                )
+            st.markdown(answer)
 
-    st.subheader(":ballot_box_with_ballot: Feedback")
-    choice = st.radio("Which response is better?", ["RAG-based", "GPT-only", "Both", "None"])
-    notes = st.text_area("Explain your choice (optional)")
-    if st.button("Submit Feedback"):
-        save_feedback(query, st.session_state.rag_response, st.session_state.gpt_response, choice, notes)
-        st.success("Feedback submitted.")
+    sources = [
+        {"text": document_text(document), "score": score}
+        for document, score in matches
+    ]
+    st.session_state.messages.append(
+        {"role": "assistant", "content": answer, "sources": sources}
+    )
+    extracted = extract_entities(retrieval_query)
+    st.session_state.trip_entities = {
+        key: value
+        for key, value in extracted.items()
+        if value not in (None, "", "NA")
+    }
+    st.rerun()

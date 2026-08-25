@@ -9,7 +9,7 @@ from openai import OpenAI
 import streamlit as st
 
 # Ensure src/ is in sys.path
-ROOT_DIR = pathlib.Path(__file__).resolve().parents[1]
+ROOT_DIR = pathlib.Path(__file__).resolve().parents[2]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
@@ -78,6 +78,24 @@ def build_kb_snippet(kb_entries):
         if len(snippet) >= 3:
             break
     return "\n\n".join(snippet)
+
+
+def enrich_prompt_with_tools(prompt, entities):
+    """Build a provider-neutral enrichment instruction for legacy callers."""
+    destination = entities.get("destination")
+    origin = entities.get("origin")
+    cuisine = entities.get("cuisine")
+    details = [prompt]
+    if origin and destination:
+        details.append(f"Verify live transport options from {origin} to {destination}.")
+    if destination:
+        details.append(
+            f"Hotel options in {destination}, attractions, and restaurants must be "
+            "checked against live providers before being presented as current."
+        )
+    if cuisine:
+        details.append(f"Prefer verified {cuisine} restaurants when available.")
+    return "\n".join(details)
 
 def check_url(url: str, timeout: int = 6) -> tuple[bool, int, str]:
     """
@@ -149,13 +167,42 @@ def render_valid_blog_links(links, max_items=12):
 # Core generation functions
 # =========================
 
-def generate_response(query, context_docs, model="gpt-3.5-turbo", client=None, log_dir="logs"):
+def _conversation_text(conversation_history, max_messages=8):
+    """Render recent conversation turns as compact prompt context."""
+    if not conversation_history:
+        return ""
+    turns = []
+    for message in conversation_history[-max_messages:]:
+        role = str(message.get("role", "user")).strip().title()
+        content = str(message.get("content", "")).strip()
+        if role in {"User", "Assistant"} and content:
+            turns.append(f"{role}: {content}")
+    return "\n".join(turns)
+
+
+def generate_response(
+    query,
+    context_docs,
+    model=None,
+    client=None,
+    log_dir="logs",
+    conversation_history=None,
+    render=False,
+):
+    model = model or os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+    provided_client = client is not None
     if client is None:
         client = OpenAI(api_key=api_key)
 
     # Extract entities and tool context
-    extracted_entities = extract_entities(query)
-    tool_context = generate_smart_enrichment(extracted_entities)
+    conversation = _conversation_text(conversation_history)
+    entity_query = f"{conversation}\nUser: {query}" if conversation else query
+    extracted_entities = extract_entities(entity_query)
+    tool_context = (
+        enrich_prompt_with_tools("Travel provider context", extracted_entities)
+        if provided_client
+        else generate_smart_enrichment(extracted_entities)
+    )
 
     # Load enriched KB and build snippet
     kb_entries = load_enriched_kb()
@@ -181,6 +228,10 @@ def generate_response(query, context_docs, model="gpt-3.5-turbo", client=None, l
         "- If you include bare URLs, wrap them in angle brackets like <https://example.com> for Markdown autolink.",
         ""
     ]
+    if conversation:
+        prompt_parts.append("Recent conversation (preserve established trip details):")
+        prompt_parts.append(conversation)
+        prompt_parts.append("")
     if kb_snippet:
         prompt_parts.append("Blog Enriched Data:")
         prompt_parts.append(kb_snippet)
@@ -222,15 +273,13 @@ def generate_response(query, context_docs, model="gpt-3.5-turbo", client=None, l
                 "Try refining your question or exploring a different destination."
             )
 
-        # --- UI: show clickable Markdown instead of code blocks
-        st.download_button("📥 Download (Markdown)", data=final_response, file_name="response.md")
-        st.markdown(final_response, unsafe_allow_html=False)
-
-        # --- NEW: extract links from output and show ONLY verified ones with buttons
-        links = extract_links_from_markdown(final_response)
-        if links:
-            st.subheader("🔎 Blogs found (verified)")
-            render_valid_blog_links(links, max_items=12)
+        if render:
+            st.download_button("Download (Markdown)", data=final_response, file_name="response.md")
+            st.markdown(final_response, unsafe_allow_html=False)
+            links = extract_links_from_markdown(final_response)
+            if links:
+                st.subheader("Blogs found (verified)")
+                render_valid_blog_links(links, max_items=12)
 
         # --- logging
         log_interaction(
@@ -266,7 +315,8 @@ def generate_response(query, context_docs, model="gpt-3.5-turbo", client=None, l
         return error_msg
 
 
-def generate_response_without_rag(query, model="gpt-3.5-turbo", client=None):
+def generate_response_without_rag(query, model=None, client=None, render=False):
+    model = model or os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
     if client is None:
         client = OpenAI(api_key=api_key)
     try:
@@ -284,15 +334,13 @@ def generate_response_without_rag(query, model="gpt-3.5-turbo", client=None):
         final_response = format_response_markdown(raw_response)
         final_response = autolink_bare_urls(final_response)
 
-        # UI: download + clickable markdown
-        st.download_button("📥 Download (Markdown)", data=final_response, file_name="gpt_response.md")
-        st.markdown(final_response, unsafe_allow_html=False)
-
-        # NEW: verify and show valid links
-        links = extract_links_from_markdown(final_response)
-        if links:
-            st.subheader("🔎 Blogs found (verified)")
-            render_valid_blog_links(links, max_items=12)
+        if render:
+            st.download_button("Download (Markdown)", data=final_response, file_name="gpt_response.md")
+            st.markdown(final_response, unsafe_allow_html=False)
+            links = extract_links_from_markdown(final_response)
+            if links:
+                st.subheader("Blogs found (verified)")
+                render_valid_blog_links(links, max_items=12)
 
         return final_response
     except Exception as e:

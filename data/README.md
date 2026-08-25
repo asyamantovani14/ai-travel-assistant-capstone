@@ -28,3 +28,15 @@ Preview it without downloading or processing data:
 ```bash
 python src/run_daily_pipeline.py --dry-run
 ```
+
+Preview removal of downloaded pages that are not travel-related:
+
+```bash
+python scripts/prune_non_travel_blogs.py
+```
+
+After reviewing `logs/blog_prune_report.csv`, apply the cleanup with:
+
+```bash
+python scripts/prune_non_travel_blogs.py --apply
+```

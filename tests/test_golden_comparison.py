@@ -5,6 +5,12 @@ import re
 from fuzzywuzzy import fuzz
 from rag_pipeline.generate_response import generate_response
 
+
+pytestmark = pytest.mark.skipif(
+    os.getenv("RUN_LIVE_TESTS") != "1",
+    reason="requires live OpenAI access; set RUN_LIVE_TESTS=1 to run",
+)
+
 # Add option for regenerating golden file
 def pytest_addoption(parser):
     parser.addoption("--accept-new-golden", action="store_true", help="Accept and overwrite golden files")

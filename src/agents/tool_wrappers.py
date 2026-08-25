@@ -3,6 +3,7 @@
 import os
 import logging
 import requests
+from functools import lru_cache
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -40,7 +41,7 @@ def real_google_maps_route(origin, destination):
             return f"Driving from {origin} to {destination} takes {leg['duration']['text']} and covers {leg['distance']['text']}."
     except Exception as e:
         logging.warning(f"[Google Maps] Failed to fetch route: {e}")
-    return f"Driving from {origin} to {destination} takes approximately 6 hours and covers 500km."
+    return None
 
 # ───────────────────────────────────────
 # Yelp or fallback restaurant recommendation
@@ -54,23 +55,91 @@ def real_restaurant_recommendation(city, cuisine=None):
         return [biz['name'] for biz in results['businesses']]
     except Exception as e:
         logging.warning(f"[Yelp] Failed to fetch restaurants: {e}")
-        return [f"{cuisine.capitalize()} Delight", f"Authentic {cuisine.capitalize()} Kitchen"] if cuisine else [
-            "Gourmet Bistro", "Family Diner", "Healthy Greens"
-        ]
+        return []
+
+
+@lru_cache(maxsize=128)
+def geocode_city(city):
+    """Resolve a city through Open-Meteo's public geocoding service."""
+    try:
+        response = requests.get(
+            "https://geocoding-api.open-meteo.com/v1/search",
+            params={"name": city, "count": 1, "language": "en", "format": "json"},
+            timeout=8,
+        )
+        response.raise_for_status()
+        results = response.json().get("results", [])
+        if results:
+            place = results[0]
+            return place["latitude"], place["longitude"], place.get("timezone", "auto")
+    except (requests.RequestException, KeyError, ValueError) as error:
+        logging.warning("[Geocoding] Failed for %s: %s", city, error)
+    return None
+
+
+def live_weather(city):
+    """Return current conditions and a short forecast, or None when unavailable."""
+    location = geocode_city(city)
+    if not location:
+        return None
+    latitude, longitude, timezone = location
+    try:
+        response = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": latitude,
+                "longitude": longitude,
+                "current": "temperature_2m,apparent_temperature,precipitation,wind_speed_10m",
+                "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max",
+                "forecast_days": 3,
+                "timezone": timezone,
+            },
+            timeout=8,
+        )
+        response.raise_for_status()
+        data = response.json()
+        current = data.get("current", {})
+        daily = data.get("daily", {})
+        dates = daily.get("time", [])
+        highs = daily.get("temperature_2m_max", [])
+        lows = daily.get("temperature_2m_min", [])
+        rain = daily.get("precipitation_probability_max", [])
+        forecast = "; ".join(
+            f"{date}: {low}-{high} C, rain {probability}%"
+            for date, low, high, probability in zip(dates, lows, highs, rain)
+        )
+        return (
+            f"Live weather in {city} at {current.get('time', 'the latest update')}: "
+            f"{current.get('temperature_2m', 'NA')} C, feels like "
+            f"{current.get('apparent_temperature', 'NA')} C, wind "
+            f"{current.get('wind_speed_10m', 'NA')} km/h. Forecast: {forecast}. "
+            "Source: Open-Meteo."
+        )
+    except (requests.RequestException, KeyError, ValueError) as error:
+        logging.warning("[Open-Meteo] Failed for %s: %s", city, error)
+        return None
 
 # ───────────────────────────────────────
 # Geoapify Attractions (Free)
 # ───────────────────────────────────────
 def geoapify_attractions(city, limit=3):
+    if not GEOAPIFY_KEY:
+        return []
+    location = geocode_city(city)
+    if not location:
+        return []
     try:
+        latitude, longitude, _ = location
         url = "https://api.geoapify.com/v2/places"
         params = {
             "categories": "tourism.sightseeing",
-            "filter": f"place:{city}",
+            "filter": f"circle:{longitude},{latitude},10000",
+            "bias": f"proximity:{longitude},{latitude}",
             "limit": limit,
             "apiKey": GEOAPIFY_KEY
         }
         response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
         data = response.json()
         return [f["properties"]["name"] for f in data.get("features", []) if "name" in f["properties"]]
     except Exception as e:
@@ -81,8 +150,9 @@ def geoapify_attractions(city, limit=3):
 # Hotel Suggestions (Mock for now)
 # ───────────────────────────────────────
 def mock_hotel_suggestions(city, pet_friendly=True):
-    hotels = [f"{city} Inn", f"{city} Grand Hotel", f"{city} Stay & Go"]
-    return [h + " (Pet Friendly)" for h in hotels] if pet_friendly else hotels
+    """Retained for compatibility; never present invented hotels as live data."""
+    del pet_friendly
+    return [f"Hotel options in {city} require a live accommodation provider."]
 
 # ───────────────────────────────────────
 # Smart Enrichment: Final Context Generator
@@ -96,24 +166,37 @@ def generate_smart_enrichment(entities):
     duration = entities.get("duration")
 
     if origin and dest:
-        lines.append(real_google_maps_route(origin, dest))
+        route = real_google_maps_route(origin, dest)
+        if route:
+            lines.append(f"Live route data: {route}")
+        else:
+            lines.append(f"Live route data from {origin} to {dest} is unavailable.")
 
     if dest and cuisine:
         recs = real_restaurant_recommendation(dest, cuisine)
-        lines.append(f"Recommended {cuisine} restaurants in {dest}: {', '.join(recs)}")
+        if recs:
+            lines.append(f"Live {cuisine} restaurants in {dest}: {', '.join(recs)}")
 
     if dest:
+        weather = live_weather(dest)
+        if weather:
+            lines.append(weather)
+        else:
+            lines.append(f"Live weather for {dest} is unavailable.")
+
         attractions = geoapify_attractions(dest)
         if attractions:
-            lines.append(f"Top attractions in {dest}: {', '.join(attractions)}")
+            lines.append(f"Live attraction results in {dest}: {', '.join(attractions)}")
         else:
-            lines.append(f"In {dest}, you may enjoy activities such as city tours, museums, and local food tasting.")
+            lines.append(f"Live attraction data for {dest} is unavailable.")
 
         rest_fallback = real_restaurant_recommendation(dest)
-        lines.append(f"Popular restaurants include: {', '.join(rest_fallback)}")
+        if rest_fallback:
+            lines.append(f"Live restaurant results: {', '.join(rest_fallback)}")
+        else:
+            lines.append(f"Live restaurant data for {dest} is unavailable.")
 
-        hotels = mock_hotel_suggestions(dest)
-        lines.append(f"Hotel options in {dest}: {', '.join(hotels)}")
+        lines.extend(mock_hotel_suggestions(dest))
 
     if budget:
         lines.append(f"User's budget is approximately ${budget}.")

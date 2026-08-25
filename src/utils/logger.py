@@ -21,6 +21,7 @@ def log_interaction(
     # Daily log file
     date_str = datetime.now().strftime("%Y-%m-%d")
     log_file = os.path.join(log_dir, f"{date_str}_log.txt")
+    aggregate_log_file = os.path.join(log_dir, "query_log.txt")
 
     # Optional: save also per-query log
     query_hash = hashlib.md5(query.encode("utf-8")).hexdigest()[:8]
@@ -33,7 +34,8 @@ def log_interaction(
     log_block = []
 
     log_block.append(f"--- Query at {timestamp} ---")
-    log_block.append(f"Model Used: {model or 'unknown'}")
+    if model:
+        log_block.append(f"Model Used: {model}")
     log_block.append(f"User Query:\n{query}\n")
 
     log_block.append("Top Matching Documents:")
@@ -59,12 +61,16 @@ def log_interaction(
 
     log_block.append("\nGenerated Response:")
     log_block.append(str(response))
-    log_block.append("=" * 100 + "\n")
+    log_block.append("=" * 80 + "\n")
 
     full_text = "\n".join(log_block)
 
     # Append to daily log
     with open(log_file, "a", encoding="utf-8") as f:
+        f.write(full_text)
+
+    # Stable aggregate path used by integrations and regression tests.
+    with open(aggregate_log_file, "a", encoding="utf-8") as f:
         f.write(full_text)
 
     # Save single query log too
