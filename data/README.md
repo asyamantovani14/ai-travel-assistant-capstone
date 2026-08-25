@@ -35,7 +35,7 @@ Preview removal of downloaded pages that are not travel-related:
 python scripts/prune_non_travel_blogs.py
 ```
 
-After reviewing `logs/blog_prune_report.csv`, apply the cleanup with:
+After reviewing `logs/blog_prune_preview.csv`, apply the cleanup with:
 
 ```bash
 python scripts/prune_non_travel_blogs.py --apply

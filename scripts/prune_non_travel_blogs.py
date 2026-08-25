@@ -15,6 +15,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 BLOG_ROOT = (PROJECT_ROOT / "data" / "blogs").resolve()
 REPORT_PATH = PROJECT_ROOT / "logs" / "blog_prune_report.csv"
+PREVIEW_REPORT_PATH = PROJECT_ROOT / "logs" / "blog_prune_preview.csv"
 
 TRAVEL_DOMAINS = {
     "luxuryhotelinsider.com",
@@ -78,7 +79,7 @@ def classify_file(path: Path):
     return path, keep, reason, path.stat().st_size
 
 
-def prune(*, apply: bool) -> Counter:
+def prune(*, apply: bool) -> tuple[Counter, Path]:
     if not BLOG_ROOT.is_dir():
         raise FileNotFoundError(f"Blog directory not found: {BLOG_ROOT}")
 
@@ -98,11 +99,13 @@ def prune(*, apply: bool) -> Counter:
                 if apply:
                     path.unlink()
 
-    REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with REPORT_PATH.open("w", encoding="utf-8", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(["action", "reason", "bytes", "relative_path"])
-        writer.writerows(rows)
+    report_path = REPORT_PATH if apply else PREVIEW_REPORT_PATH
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    if rows or not report_path.exists():
+        with report_path.open("w", encoding="utf-8", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["action", "reason", "bytes", "relative_path"])
+            writer.writerows(rows)
 
     if apply:
         directories = sorted(
@@ -115,7 +118,7 @@ def prune(*, apply: bool) -> Counter:
                 directory.rmdir()
             except OSError:
                 pass
-    return stats
+    return stats, report_path
 
 
 def main() -> int:
@@ -126,12 +129,12 @@ def main() -> int:
         help="Permanently delete classified files; default is a dry run",
     )
     args = parser.parse_args()
-    stats = prune(apply=args.apply)
+    stats, report_path = prune(apply=args.apply)
     mode = "APPLIED" if args.apply else "DRY RUN"
     print(f"Mode: {mode}")
     print(f"Keep: {stats['keep_files']:,} files ({stats['keep_bytes'] / 2**30:.2f} GiB)")
     print(f"Delete: {stats['delete_files']:,} files ({stats['delete_bytes'] / 2**30:.2f} GiB)")
-    print(f"Report: {REPORT_PATH}")
+    print(f"Report: {report_path}")
     return 0
 
 
